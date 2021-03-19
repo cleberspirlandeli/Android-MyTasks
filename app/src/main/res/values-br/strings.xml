@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tarefas</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+
+
+    <string name="action_settings">Configuraçoes</string>
+
+    <string name="menu_home">Inicio</string>
+    <string name="menu_next">Proximos</string>
+    <string name="menu_done">Concluidos</string>
+
+    <string name="hint_task">Tarefa</string>
+    <string name="hint_priority">Prioridade</string>
+    <string name="complete">Concluido</string>
+    <string name="save">Salvar</string>
+    <string name="hint_description">Descriçao</string>
+
+    <!--  ITEMS PRIORITY  -->
+    <string-array name="priorities_array">
+        <item>Baixo</item>
+        <item>Medio</item>
+        <item>Alto</item>
+    </string-array>
+</resources>
