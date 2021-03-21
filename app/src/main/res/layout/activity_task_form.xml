@@ -33,7 +33,7 @@
         </androidx.cardview.widget.CardView>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/txtTask"
+            android:id="@+id/tilTask"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,23 +45,24 @@
             tools:ignore="MissingConstraints">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txtTask"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
-                android:inputType="text"
+                android:inputType="textCapSentences"
                 android:maxLength="30"
                 android:nextFocusDown="@+id/txtPriority"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/txtPriority"
+            android:id="@+id/tilPriority"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:hint="@string/hint_priority"
-            app:layout_constraintTop_toBottomOf="@+id/txtTask"
+            app:layout_constraintTop_toBottomOf="@+id/tilTask"
             tools:ignore="MissingConstraints">
 
             <AutoCompleteTextView
@@ -92,15 +93,15 @@
             app:icon="@drawable/ic_baseline_calendar_today_24"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtPriority" />
+            app:layout_constraintTop_toBottomOf="@+id/tilPriority" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/swtComplete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:checked="true"
-            android:nextFocusDown="@id/txtDescription"
+            android:checked="false"
+            android:nextFocusDown="@id/tilDescription"
             android:paddingLeft="40dp"
             android:text="@string/complete"
             android:textSize="16sp"
@@ -113,14 +114,14 @@
             android:id="@+id/imgTask"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_baseline_task_alt_24"
+            android:src="@drawable/ic_baseline_highlight_off_24"
             app:layout_constraintBottom_toBottomOf="@+id/swtComplete"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/swtComplete" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/txtDescription"
+            android:id="@+id/tilDescription"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -133,11 +134,12 @@
             tools:ignore="MissingConstraints">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txtDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:imeOptions="actionDone"
-                android:inputType="textMultiLine"
+                android:inputType="textMultiLine|textCapSentences"
                 android:maxLength="100"
                 android:maxLines="3"
                 android:singleLine="false" />
@@ -152,7 +154,7 @@
             android:background="@drawable/shape_buttom"
             android:text="@string/save"
             android:textSize="18dp"
-            app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
+            app:layout_constraintTop_toBottomOf="@+id/tilDescription" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

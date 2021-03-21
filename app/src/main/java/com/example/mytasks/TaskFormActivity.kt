@@ -2,12 +2,22 @@ package com.example.mytasks
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.example.mytasks.model.TaskModel
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_task_form.*
 import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
@@ -26,7 +36,8 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
     private var savedMinute = 0
 
     private val mDateFormat: SimpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
-
+    lateinit var db: FirebaseFirestore
+    private var items = arrayOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +45,10 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        val items = resources.getStringArray(R.array.priorities_array)
+        items = resources.getStringArray(R.array.priorities_array)
         val adapter = ArrayAdapter(baseContext, R.layout.option_item_priority, items)
+
+        db = Firebase.firestore
 
         // Set make default value
         autoCompletePriority.setText(adapter.getItem(0).toString(), false)
@@ -64,17 +77,51 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
         swtComplete.setOnClickListener(this)
         btnDate.setOnClickListener(this)
         autoCompletePriority.setOnClickListener(this)
+        btnSave.setOnClickListener(this)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.swtComplete -> changeImage()
             R.id.btnDate -> openDatePicker()
             R.id.autoCompletePriority -> changeImageAutoComplete()
+            R.id.btnSave -> saveTask()
             else -> { // Note the block
                 print("x is neither 1 nor 2")
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun saveTask() {
+        var date = btnDate.text.toString()
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+        val dateFormatted = date.format(formatter)
+
+        var priorityIndex = items.indexOf(autoCompletePriority.text.toString())
+
+        val task = hashMapOf(
+            "task" to txtTask.text.toString(),
+            "priority" to priorityIndex,
+            "complete" to swtComplete.isChecked,
+            "date" to dateFormatted,
+            "description" to txtDescription.text.toString()
+        )
+
+
+
+        db.collection("tasks")
+            .add(task)
+            .addOnSuccessListener { documentReference ->
+                Log.d("addOnSuccessListener", "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w("addOnFailureListener", "Error adding document", e)
+            }
+
+        return
     }
 
     private fun changeImageAutoComplete() {

@@ -56,6 +56,9 @@ dependencies {
     // FIREBASE
     implementation 'com.google.firebase:firebase-auth-ktx'
 
+    // FireStore
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:26.7.0')
     // Add the dependency for the Firebase SDK for Google Analytics
