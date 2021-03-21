@@ -1,4 +1,9 @@
 <resources>
+    <!--  FACEBOOK  -->
+    <string name="facebook_app_id">481217056244918</string>
+    <string name="fb_login_protocol_scheme">fb481217056244918</string>
+
+
     <string name="app_name">Tarefas</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -21,6 +26,13 @@
     <string name="save">Salvar</string>
     <string name="hint_description">Descriçao</string>
 
+    <string name="login_with_google">Login com Google</string>
+    <string name="login_with_facebook">Login com Facebook</string>
+    <string name="not_have_an_account_yet">Ainda nao tem uma conta?</string>
+    <string name="register">Cadastre-se</string>
+
+    <string name="txt_err_connect_a_google">Erro ao conectar com a conta do Google</string>
+    <string name="txt_err_create_account_google">Erro ao criar conta com o Google</string>
 
     <!--  ITEMS PRIORITY  -->
     <string-array name="priorities_array">

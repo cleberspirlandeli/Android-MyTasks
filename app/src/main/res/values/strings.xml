@@ -1,5 +1,11 @@
 <resources>
-    <string name="app_name">MyTasks</string>
+
+    <!--  FACEBOOK  -->
+    <string name="facebook_app_id">481217056244918</string>
+    <string name="fb_login_protocol_scheme">fb481217056244918</string>
+
+
+    <string name="app_name">MY TASKS</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -17,6 +23,12 @@
     <string name="complete">Complete</string>
     <string name="save">Save</string>
     <string name="hint_description">Description</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="login_with_facebook">Login with Facebook</string>
+    <string name="not_have_an_account_yet">Not have an account yet?</string>
+    <string name="register">Register</string>
+    <string name="txt_err_connect_a_google">Error connecting to Google account</string>
+    <string name="txt_err_create_account_google">Error creating account with Google</string>
 
 
     <!--  ITEMS PRIORITY  -->
