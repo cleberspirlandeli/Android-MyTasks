@@ -34,6 +34,10 @@
     <string name="txt_err_connect_a_google">Erro ao conectar com a conta do Google</string>
     <string name="txt_err_create_account_google">Erro ao criar conta com o Google</string>
 
+
+    <!--  TASK FORM  -->
+    <string name="task_successfully_created">Tarefa criado com sucesso</string>
+
     <!--  ITEMS PRIORITY  -->
     <string-array name="priorities_array">
         <item>Baixo</item>

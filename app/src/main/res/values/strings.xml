@@ -31,6 +31,9 @@
     <string name="txt_err_create_account_google">Error creating account with Google</string>
 
 
+    <!--  TASK FORM  -->
+    <string name="task_successfully_created">Task successfully created</string>
+
     <!--  ITEMS PRIORITY  -->
     <string-array name="priorities_array">
         <item>Low</item>
