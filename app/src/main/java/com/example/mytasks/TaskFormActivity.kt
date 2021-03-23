@@ -5,6 +5,7 @@ import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -71,6 +72,8 @@ class TaskFormActivity : AppCompatActivity(),
         autoCompletePriority.setText(adapter.getItem(0).toString(), false)
         autoCompletePriority.setAdapter(adapter);
 
+        btn_delete.visibility = View.GONE
+
         listeners()
         setActualDateAndHours()
         configDialog()
@@ -112,6 +115,7 @@ class TaskFormActivity : AppCompatActivity(),
         btnDate.setOnClickListener(this)
         btnSave.setOnClickListener(this)
         cvPicture.setOnClickListener(this)
+        btn_delete.setOnClickListener(this)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -123,10 +127,19 @@ class TaskFormActivity : AppCompatActivity(),
             R.id.btn_dialog_cancel -> dialog.dismiss()
             R.id.constraint_layout_dialog_gallery -> openGallery()
             R.id.constraint_layout_dialog_camera -> openCamera()
+            R.id.btn_delete -> setDefaultImageDelete()
             else -> { // Note the block
                 print("x is neither 1 nor 2")
             }
         }
+    }
+
+    private fun setDefaultImageDelete() {
+        btn_delete.visibility = View.GONE
+        imageTask.layoutParams.width = 220
+        imageTask.layoutParams.height = 220
+        imageTask.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_add_photo_alternate_24))
+
     }
 
     private fun openCamera() {
@@ -145,12 +158,31 @@ class TaskFormActivity : AppCompatActivity(),
 
     private fun callCamera() {
         dialog.dismiss()
+        val CODE_PERMISSION_ACTION_IMAGE_CAPTURE = 101
         var intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(intent, 101)
+        startActivityForResult(intent, CODE_PERMISSION_ACTION_IMAGE_CAPTURE)
     }
 
     private fun openGallery() {
         Toast.makeText(baseContext, "Gallery", Toast.LENGTH_SHORT).show()
+
+        val PERMISSION_CODE = 1001
+
+        if (ActivityCompat.checkSelfPermission(baseContext, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+            val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+            ActivityCompat.requestPermissions(this, permissions, PERMISSION_CODE)
+        } else {
+            callGallery()
+        }
+
+    }
+
+    private fun callGallery() {
+        dialog.dismiss()
+        val IMAGE_PICK_CODE = 1000
+        var intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, IMAGE_PICK_CODE)
     }
 
     private fun openDialogFromImage() {
@@ -266,15 +298,37 @@ class TaskFormActivity : AppCompatActivity(),
         if (requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             callCamera()
         }
+
+        if (requestCode == 1001 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults.isNotEmpty()) {
+            callGallery()
+        }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 101) {
-            var picture: Bitmap? = data?.getParcelableExtra<Bitmap>("data")
+
+        if (requestCode == 101 && data != null) {
+            var picture: Bitmap? = data.getParcelableExtra<Bitmap>("data")
+
             imageTask.setImageBitmap(picture)
             imageTask.layoutParams.width = ActionBar.LayoutParams.MATCH_PARENT
             imageTask.layoutParams.height = ActionBar.LayoutParams.MATCH_PARENT
+
+            btn_delete.visibility = View.VISIBLE
+            return
+        }
+
+        if (requestCode == 1000 && resultCode == Activity.RESULT_OK && data != null) {
+            val source = data.data?.let { ImageDecoder.createSource(this.contentResolver, it) }
+            val picture = source?.let { ImageDecoder.decodeBitmap(it) }
+
+            imageTask.setImageBitmap(picture)
+            imageTask.layoutParams.width = ActionBar.LayoutParams.MATCH_PARENT
+            imageTask.layoutParams.height = ActionBar.LayoutParams.MATCH_PARENT
+
+            btn_delete.visibility = View.VISIBLE
+            return
         }
     }
 
