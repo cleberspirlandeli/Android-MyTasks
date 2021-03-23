@@ -34,6 +34,11 @@
     <string name="txt_err_connect_a_google">Erro ao conectar com a conta do Google</string>
     <string name="txt_err_create_account_google">Erro ao criar conta com o Google</string>
 
+    <!--  DIALOG CUSTOM GALERY  -->
+    <string name="txt_dialog_camera">Camera</string>
+    <string name="txt_dialog_gallery">Galeria</string>
+    <string name="btn_dialog_cancel">Cancelar</string>
+    <string name="txt_dialog_choose">Escolher</string>
 
     <!--  TASK FORM  -->
     <string name="task_successfully_created">Tarefa criado com sucesso</string>

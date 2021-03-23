@@ -34,6 +34,12 @@
     <!--  TASK FORM  -->
     <string name="task_successfully_created">Task successfully created</string>
 
+    <!--  DIALOG CUSTOM GALERY  -->
+    <string name="txt_dialog_camera">Camera</string>
+    <string name="txt_dialog_gallery">Gallery</string>
+    <string name="btn_dialog_cancel">Cancel</string>
+    <string name="txt_dialog_choose">Choose</string>
+
     <!--  ITEMS PRIORITY  -->
     <string-array name="priorities_array">
         <item>Low</item>

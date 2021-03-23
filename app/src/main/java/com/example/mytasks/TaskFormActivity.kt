@@ -1,15 +1,20 @@
 package com.example.mytasks
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.app.TimePickerDialog
+import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.view.Window
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -17,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_task_form.*
+import kotlinx.android.synthetic.main.dialog_custom_galery.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -25,8 +31,7 @@ class TaskFormActivity : AppCompatActivity(),
     View.OnClickListener,
     DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener,
-    CompoundButton.OnCheckedChangeListener
-    {
+    CompoundButton.OnCheckedChangeListener {
 
     private var day = 0
     private var month = 0
@@ -45,6 +50,8 @@ class TaskFormActivity : AppCompatActivity(),
 
     private lateinit var auth: FirebaseAuth
     private lateinit var user: FirebaseUser
+
+    private lateinit var dialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +72,24 @@ class TaskFormActivity : AppCompatActivity(),
 
         listeners()
         setActualDateAndHours()
+        configDialog()
+    }
+
+    private fun configDialog() {
+        dialog = Dialog(this)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.dialog_custom_galery)
+
+        val btnCancel = dialog.findViewById<Button>(R.id.btn_dialog_cancel)
+        val btnCamera = dialog.findViewById<ConstraintLayout>(R.id.constraint_layout_dialog_camera)
+        val btnGallery =
+            dialog.findViewById<ConstraintLayout>(R.id.constraint_layout_dialog_gallery)
+
+        btnCancel.setOnClickListener(this)
+        btnCamera.setOnClickListener(this)
+        btnGallery.setOnClickListener(this)
     }
 
     private fun setActualDateAndHours() {
@@ -85,6 +110,7 @@ class TaskFormActivity : AppCompatActivity(),
         swtComplete.setOnCheckedChangeListener(this)
         btnDate.setOnClickListener(this)
         btnSave.setOnClickListener(this)
+        cvPicture.setOnClickListener(this)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -92,10 +118,26 @@ class TaskFormActivity : AppCompatActivity(),
         when (v?.id) {
             R.id.btnDate -> openDatePicker()
             R.id.btnSave -> saveTask()
+            R.id.cvPicture -> openDialogFromImage()
+            R.id.btn_dialog_cancel -> dialog.dismiss()
+            R.id.constraint_layout_dialog_gallery -> openGallery()
+            R.id.constraint_layout_dialog_camera -> openCamera()
             else -> { // Note the block
                 print("x is neither 1 nor 2")
             }
         }
+    }
+
+    private fun openCamera() {
+        Toast.makeText(baseContext, "Camera", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun openGallery() {
+        Toast.makeText(baseContext, "Gallery", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun openDialogFromImage() {
+        dialog.show()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -142,10 +184,6 @@ class TaskFormActivity : AppCompatActivity(),
             .addOnFailureListener { e ->
                 Log.w("addOnFailureListener", "Error adding document", e)
             }
-    }
-
-    private fun changeImageAutoComplete() {
-        Toast.makeText(baseContext, "Clicou", Toast.LENGTH_LONG).show()
     }
 
     private fun getDateTimeCalendar() {
