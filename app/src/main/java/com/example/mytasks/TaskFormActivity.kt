@@ -1,12 +1,13 @@
 package com.example.mytasks
 
-import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.app.Dialog
-import android.app.TimePickerDialog
-import android.content.DialogInterface
+import android.Manifest
+import android.app.*
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -15,6 +16,7 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -22,7 +24,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_task_form.*
-import kotlinx.android.synthetic.main.dialog_custom_galery.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -130,6 +131,22 @@ class TaskFormActivity : AppCompatActivity(),
 
     private fun openCamera() {
         Toast.makeText(baseContext, "Camera", Toast.LENGTH_SHORT).show()
+
+        if (ActivityCompat.checkSelfPermission(
+                baseContext,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 111)
+        } else {
+            callCamera()
+        }
+    }
+
+    private fun callCamera() {
+        dialog.dismiss()
+        var intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, 101)
     }
 
     private fun openGallery() {
@@ -238,6 +255,29 @@ class TaskFormActivity : AppCompatActivity(),
             }
         }
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            callCamera()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 101) {
+            var picture: Bitmap? = data?.getParcelableExtra<Bitmap>("data")
+            imageTask.setImageBitmap(picture)
+            imageTask.layoutParams.width = ActionBar.LayoutParams.MATCH_PARENT
+            imageTask.layoutParams.height = ActionBar.LayoutParams.MATCH_PARENT
+        }
+    }
+
 
 }
 

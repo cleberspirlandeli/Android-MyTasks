@@ -54,13 +54,12 @@ class SplashScreen : AppCompatActivity(), Runnable {
         try {
             val user = auth.currentUser
 
-            Thread.sleep(300)
+            Thread.sleep(2000)
 
             if (user == null || !user.isEmailVerified) {
                 startActivity(Intent(baseContext, AuthenticationActivity::class.java))
             } else {
-//                startActivity(Intent(baseContext, MainActivity::class.java))
-                startActivity(Intent(baseContext, TaskFormActivity::class.java))
+                startActivity(Intent(baseContext, MainActivity::class.java))
             }
             finish()
         } catch (e: InterruptedException) {
