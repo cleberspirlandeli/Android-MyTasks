@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_activity_task_form"
     android:layout_width="match_parent"
+    android:padding="16dp"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -11,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp"
         tools:context=".TaskFormActivity">
 
         <androidx.cardview.widget.CardView
@@ -157,19 +157,21 @@
                 android:singleLine="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+
+
+        <include
             android:id="@+id/btnSave"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="match_parent"
+            layout="@layout/progress_btn_layout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/shape_buttom"
-            android:text="@string/save"
-            android:textSize="18dp"
-            app:layout_constraintTop_toBottomOf="@+id/tilDescription" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/tilDescription"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </ScrollView>
 

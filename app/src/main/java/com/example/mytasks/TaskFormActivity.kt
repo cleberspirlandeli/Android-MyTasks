@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,13 +14,12 @@ import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.widget.*
-import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
+import com.example.mytasks.common.ConnectivityManager
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -30,7 +28,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_task_form.*
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -66,13 +63,17 @@ class TaskFormActivity : AppCompatActivity(),
     private lateinit var taskImageRef: StorageReference
 
     private lateinit var dialog: Dialog
-    private lateinit var imageBitmap: Bitmap
+    private var imageBitmap: Bitmap? = null
+    private lateinit var view: View
+    private lateinit var progressButton: ProgressButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_form)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        view = btnSave
 
         items = resources.getStringArray(R.array.priorities_array)
         val adapter = ArrayAdapter(baseContext, R.layout.option_item_priority, items)
@@ -155,12 +156,10 @@ class TaskFormActivity : AppCompatActivity(),
         imageTask.layoutParams.height = 220
         imageTask.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_add_photo_alternate_24))
 
-        imageBitmap.recycle()
+        imageBitmap?.recycle()
     }
 
     private fun openCamera() {
-        Toast.makeText(baseContext, "Camera", Toast.LENGTH_SHORT).show()
-
         if (ActivityCompat.checkSelfPermission(
                 baseContext,
                 Manifest.permission.CAMERA
@@ -180,8 +179,6 @@ class TaskFormActivity : AppCompatActivity(),
     }
 
     private fun openGallery() {
-        Toast.makeText(baseContext, "Gallery", Toast.LENGTH_SHORT).show()
-
         val PERMISSION_CODE = 1001
 
         if (ActivityCompat.checkSelfPermission(
@@ -211,6 +208,17 @@ class TaskFormActivity : AppCompatActivity(),
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun saveTask() {
+
+        progressButton = ProgressButton(baseContext, btnSave)
+        progressButton.buttonActivated()
+
+        if (invalidationForm()) {
+            return progressButton.buttonFinish()
+        }
+
+        if (imageBitmap == null || imageBitmap!!.isRecycled)
+            return saveTaskInFirebase()
+
         getDateTimeCalendar()
         val randomString = java.util.UUID.randomUUID().toString()
 
@@ -218,7 +226,7 @@ class TaskFormActivity : AppCompatActivity(),
         taskRef = storageRef.child("${randomString}_${day}-${month}-${year}.jpg");
 
         val baos = ByteArrayOutputStream()
-        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        imageBitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
 
         var uploadTask = taskRef.putBytes(data)
@@ -242,7 +250,28 @@ class TaskFormActivity : AppCompatActivity(),
 
     }
 
-    private fun saveTaskInFirebase(uriImage: String) {
+    private fun invalidationForm(): Boolean {
+        var error = false
+
+        if (txtTask.length() < 2) {
+            error = true
+
+            tilTask.error = resources.getString(R.string.task_error)
+            txtTask.isFocused
+        } else {
+            tilTask.error = null
+        }
+
+        if (!ConnectivityManager().isNetworkAvailable(baseContext)) {
+            error = true
+
+            Snackbar.make(view, "Sem Internet", Snackbar.LENGTH_LONG).show()
+        }
+
+        return error
+    }
+
+    private fun saveTaskInFirebase(uriImage: String = "") {
 
         val calendar = Calendar.getInstance()
         calendar[Calendar.YEAR] = savedYear
@@ -280,8 +309,11 @@ class TaskFormActivity : AppCompatActivity(),
                     Toast.makeText(this, R.string.task_successfully_created, Toast.LENGTH_SHORT)
                 toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0)
                 toast.view = layoutInflater.inflate(R.layout.toast_layout, null)
-                toast.show()
+
+                progressButton.buttonFinish()
                 finish()
+
+                toast.show()
             }
             .addOnFailureListener { e ->
                 Log.w("addOnFailureListener", "Error adding document", e)
@@ -389,7 +421,5 @@ class TaskFormActivity : AppCompatActivity(),
             return
         }
     }
-
-
 }
 

@@ -33,6 +33,10 @@
 
     <!--  TASK FORM  -->
     <string name="task_successfully_created">Task successfully created</string>
+    <string name="await_loading">Wait...</string>
+
+    <!--  TASK FORM ERROR -->
+    <string name="task_error">Enter the name of the task</string>
 
     <!--  DIALOG CUSTOM GALERY  -->
     <string name="txt_dialog_camera">Camera</string>
