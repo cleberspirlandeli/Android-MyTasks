@@ -20,7 +20,8 @@
             android:value="@string/facebook_app_id" />
 
 
-        <activity android:name=".AuthenticationActivity"></activity>
+        <activity android:name=".AuthenticationActivity"
+            android:theme="@style/Theme.MyTasks.SplashScreen"></activity>
         <activity
             android:name=".TaskFormActivity"
             android:parentActivityName=".MainActivity"></activity>
