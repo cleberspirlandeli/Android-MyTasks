@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,17 +15,24 @@ import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.widget.*
+import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_task_form.*
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -52,8 +60,13 @@ class TaskFormActivity : AppCompatActivity(),
 
     private lateinit var auth: FirebaseAuth
     private lateinit var user: FirebaseUser
+    private lateinit var storage: FirebaseStorage
+    private lateinit var storageRef: StorageReference
+    private lateinit var taskRef: StorageReference
+    private lateinit var taskImageRef: StorageReference
 
     private lateinit var dialog: Dialog
+    private lateinit var imageBitmap: Bitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +79,8 @@ class TaskFormActivity : AppCompatActivity(),
 
         db = Firebase.firestore
         auth = Firebase.auth
+        storage = FirebaseStorage.getInstance()
+        storageRef = storage.getReferenceFromUrl("gs://mytasks-d9a0d.appspot.com/mytasks/task")
         user = auth.currentUser
 
         // Set make default value
@@ -140,6 +155,7 @@ class TaskFormActivity : AppCompatActivity(),
         imageTask.layoutParams.height = 220
         imageTask.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_add_photo_alternate_24))
 
+        imageBitmap.recycle()
     }
 
     private fun openCamera() {
@@ -168,7 +184,11 @@ class TaskFormActivity : AppCompatActivity(),
 
         val PERMISSION_CODE = 1001
 
-        if (ActivityCompat.checkSelfPermission(baseContext, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+        if (ActivityCompat.checkSelfPermission(
+                baseContext,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
             val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ActivityCompat.requestPermissions(this, permissions, PERMISSION_CODE)
         } else {
@@ -191,6 +211,38 @@ class TaskFormActivity : AppCompatActivity(),
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun saveTask() {
+        getDateTimeCalendar()
+        val randomString = java.util.UUID.randomUUID().toString()
+
+        // Create a reference to "mountains.jpg"
+        taskRef = storageRef.child("${randomString}_${day}-${month}-${year}.jpg");
+
+        val baos = ByteArrayOutputStream()
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
+
+        var uploadTask = taskRef.putBytes(data)
+
+        uploadTask.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    throw it
+                }
+            }
+            taskRef.downloadUrl
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val downloadUri = task.result.toString()
+                saveTaskInFirebase(downloadUri)
+            } else {
+                // Handle failures
+                // ...
+            }
+        }
+
+    }
+
+    private fun saveTaskInFirebase(uriImage: String) {
 
         val calendar = Calendar.getInstance()
         calendar[Calendar.YEAR] = savedYear
@@ -212,7 +264,8 @@ class TaskFormActivity : AppCompatActivity(),
             "priority" to priorityIndex,
             "complete" to swtComplete.isChecked,
             "date" to timestamp,
-            "description" to txtDescription.text.toString()
+            "description" to txtDescription.text.toString(),
+            "image" to uriImage
         )
 
         db.collection("tasks")
@@ -233,6 +286,7 @@ class TaskFormActivity : AppCompatActivity(),
             .addOnFailureListener { e ->
                 Log.w("addOnFailureListener", "Error adding document", e)
             }
+
     }
 
     private fun getDateTimeCalendar() {
@@ -311,6 +365,8 @@ class TaskFormActivity : AppCompatActivity(),
         if (requestCode == 101 && data != null) {
             var picture: Bitmap? = data.getParcelableExtra<Bitmap>("data")
 
+            imageBitmap = picture!!
+
             imageTask.setImageBitmap(picture)
             imageTask.layoutParams.width = ActionBar.LayoutParams.MATCH_PARENT
             imageTask.layoutParams.height = ActionBar.LayoutParams.MATCH_PARENT
@@ -322,6 +378,8 @@ class TaskFormActivity : AppCompatActivity(),
         if (requestCode == 1000 && resultCode == Activity.RESULT_OK && data != null) {
             val source = data.data?.let { ImageDecoder.createSource(this.contentResolver, it) }
             val picture = source?.let { ImageDecoder.decodeBitmap(it) }
+
+            imageBitmap = picture!!
 
             imageTask.setImageBitmap(picture)
             imageTask.layoutParams.width = ActionBar.LayoutParams.MATCH_PARENT
