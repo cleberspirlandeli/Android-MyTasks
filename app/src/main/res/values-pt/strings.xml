@@ -16,8 +16,8 @@
 
     <string name="action_settings">Configuraçoes</string>
 
-    <string name="menu_home">Início</string>
-    <string name="menu_next">Próximos</string>
+    <string name="menu_home">Hoje</string>
+    <string name="menu_next">Essa semana</string>
     <string name="menu_done">Concluidos</string>
 
     <string name="hint_task">Tarefa</string>
@@ -39,6 +39,9 @@
     <string name="txt_dialog_gallery">Galeria</string>
     <string name="btn_dialog_cancel">Cancelar</string>
     <string name="txt_dialog_choose">Escolher</string>
+    <string name="task_today">Hoje</string>
+    <string name="task_this_week">Essa semana</string>
+    <string name="task_done">Concluidos</string>
 
     <!--  TASK FORM  -->
     <string name="task_successfully_created">Tarefa criada com sucesso</string>

@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import com.example.mytasks.common.ConnectivityManager
+import com.example.mytasks.model.TaskModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -88,7 +89,7 @@ class TaskFormActivity : AppCompatActivity(),
         autoCompletePriority.setText(adapter.getItem(0).toString(), false)
         autoCompletePriority.setAdapter(adapter);
 
-        btn_delete.visibility = View.GONE
+        btn_delete.visibility = View.INVISIBLE
 
         listeners()
         setActualDateAndHours()
@@ -151,7 +152,7 @@ class TaskFormActivity : AppCompatActivity(),
     }
 
     private fun setDefaultImageDelete() {
-        btn_delete.visibility = View.GONE
+        btn_delete.visibility = View.INVISIBLE
         imageTask.layoutParams.width = 220
         imageTask.layoutParams.height = 220
         imageTask.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_add_photo_alternate_24))
@@ -287,14 +288,14 @@ class TaskFormActivity : AppCompatActivity(),
 
         var priorityIndex = items.indexOf(autoCompletePriority.text.toString())
 
-        val task = hashMapOf(
-            "userId" to user.uid,
-            "task" to txtTask.text.toString(),
-            "priority" to priorityIndex,
-            "complete" to swtComplete.isChecked,
-            "date" to timestamp,
-            "description" to txtDescription.text.toString(),
-            "image" to uriImage
+        val task = TaskModel(
+            user.uid,
+            txtTask.text.toString(),
+            priorityIndex,
+            swtComplete.isChecked,
+            timestamp,
+            txtDescription.text.toString(),
+            uriImage
         )
 
         db.collection("tasks")
