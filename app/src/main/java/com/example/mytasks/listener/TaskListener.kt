@@ -3,27 +3,27 @@ package com.example.mytasks.listener
 interface TaskListener {
 
     /**
-     * Update
-     * Click para edição
+     * View / Update
+     * Click para Visualizaçao / Ediçao
      */
-    fun onUpdateTaskClick(id: Int)
+    fun onViewTaskClick(id: String)
 
     /**
      * Delete
      * Remoção
      */
-    fun onDeleteTaskClick(id: Int)
+    fun onDeleteTaskClick(id: String)
 
     /**
      * Done Task
      * Completa tarefa
      */
-    fun onCompleteTaskClick(id: Int)
+    fun onDoneTaskClick(id: String)
 
     /**
      * Undo Task
      * Descompleta tarefa
      */
-    fun onUndoTaskClick(id: Int)
+    fun onUndoTaskClick(id: String)
 
 }

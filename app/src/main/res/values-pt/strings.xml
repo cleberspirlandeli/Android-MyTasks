@@ -50,6 +50,12 @@
     <!--  TASK FORM ERROR -->
     <string name="task_error">Informe o nome da tarefa</string>
 
+    <!--  TASK RECYCLER VIEW  -->
+    <string name="remove_task">Remover Tarefa</string>
+    <string name="confirme_remove_task">Deseja remover essa tarefa?</string>
+    <string name="yes">Sim</string>
+    <string name="cancel">Cancelar</string>
+
     <!--  ITEMS PRIORITY  -->
     <string-array name="priorities_array">
         <item>Baixo</item>

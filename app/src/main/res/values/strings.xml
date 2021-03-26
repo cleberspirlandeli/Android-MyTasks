@@ -46,6 +46,15 @@
     <string name="task_today">Today</string>
     <string name="task_this_week">This Week</string>
     <string name="task_done">Done</string>
+    <string name="remove_task">Remove This Task</string>
+    <string name="confirme_remove_task">Do you want to remove this task?</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="undo_task">Undo Task</string>
+    <string name="confirme_undo_task">Do you want to undo this task?</string>
+    <string name="done_task">Done Task</string>
+    <string name="confirme_done_task">Did you complete this task?</string>
+
 
     <!--  ITEMS PRIORITY  -->
     <string-array name="priorities_array">
