@@ -79,21 +79,33 @@ class TaskFormActivity : AppCompatActivity(),
         items = resources.getStringArray(R.array.priorities_array)
         val adapter = ArrayAdapter(baseContext, R.layout.option_item_priority, items)
 
+        // Set make default value
+        autoCompletePriority.setText(adapter.getItem(0).toString(), false)
+        autoCompletePriority.setAdapter(adapter);
+
         db = Firebase.firestore
         auth = Firebase.auth
         storage = FirebaseStorage.getInstance()
         storageRef = storage.getReferenceFromUrl("gs://mytasks-d9a0d.appspot.com/mytasks/task")
         user = auth.currentUser
 
-        // Set make default value
-        autoCompletePriority.setText(adapter.getItem(0).toString(), false)
-        autoCompletePriority.setAdapter(adapter);
+
 
         btn_delete.visibility = View.INVISIBLE
 
         listeners()
         setActualDateAndHours()
         configDialog()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        items = resources.getStringArray(R.array.priorities_array)
+        val adapter = ArrayAdapter(baseContext, R.layout.option_item_priority, items)
+
+        // Set make default value
+        autoCompletePriority.setAdapter(adapter);
     }
 
     private fun configDialog() {
@@ -400,9 +412,9 @@ class TaskFormActivity : AppCompatActivity(),
 
             imageBitmap = picture!!
 
-            imageTask.setImageBitmap(picture)
             imageTask.layoutParams.width = ActionBar.LayoutParams.MATCH_PARENT
             imageTask.layoutParams.height = ActionBar.LayoutParams.MATCH_PARENT
+            imageTask.setImageBitmap(picture)
 
             btn_delete.visibility = View.VISIBLE
             return
@@ -414,9 +426,9 @@ class TaskFormActivity : AppCompatActivity(),
 
             imageBitmap = picture!!
 
-            imageTask.setImageBitmap(picture)
             imageTask.layoutParams.width = ActionBar.LayoutParams.MATCH_PARENT
             imageTask.layoutParams.height = ActionBar.LayoutParams.MATCH_PARENT
+            imageTask.setImageBitmap(picture)
 
             btn_delete.visibility = View.VISIBLE
             return
