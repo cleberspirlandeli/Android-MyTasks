@@ -54,6 +54,8 @@
     <string name="confirme_undo_task">Do you want to undo this task?</string>
     <string name="done_task">Done Task</string>
     <string name="confirme_done_task">Did you complete this task?</string>
+    <string name="task_removed_successfully">Task successfully removed</string>
+    <string name="task_updated_successfully">Task successfully updated</string>
 
 
     <!--  ITEMS PRIORITY  -->

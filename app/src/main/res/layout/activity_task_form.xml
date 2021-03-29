@@ -173,6 +173,7 @@
                 android:inputType="textMultiLine|textCapSentences"
                 android:maxLength="100"
                 android:maxLines="3"
+                android:layout_marginBottom="50dp"
                 android:singleLine="false" />
         </com.google.android.material.textfield.TextInputLayout>
 

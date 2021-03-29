@@ -27,7 +27,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:scaleType="center"
-                    android:src="@drawable/image_test" />
+                    android:src="@drawable/ic_baseline_hide_image_24"
+                     />
 
                 <ImageView
                     android:id="@+id/img_btn_delete_task"
@@ -56,7 +57,7 @@
                     android:text="25/03/2021 15:30"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
-                    android:textSize="34dp"
+                    android:textSize="28dp"
                     android:textStyle="bold"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
@@ -82,7 +83,7 @@
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="18dp"
-                    android:textStyle="bold"
+                    android:textStyle="italic"
 
                     app:layout_constraintTop_toBottomOf="@+id/txt_date_task" />
 

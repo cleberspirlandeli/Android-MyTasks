@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,11 +15,18 @@ import com.example.mytasks.R
 import com.example.mytasks.adapter.ListTasksAdapter
 import com.example.mytasks.listener.TaskListener
 import com.example.mytasks.service.model.TaskModel
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 class TodayFragment : Fragment() {
+
+    // FIREBASE
+    private lateinit var auth: FirebaseAuth
+    private lateinit var user: FirebaseUser
+
 
     private lateinit var mViewModel: TodayViewModel
     private lateinit var mListener: TaskListener
@@ -38,6 +46,9 @@ class TodayFragment : Fragment() {
 
         val root = inflater.inflate(R.layout.fragment_today, container, false)
 
+        auth = Firebase.auth
+        user = auth.currentUser
+
         val recyclerToday = root.findViewById<RecyclerView>(R.id.recyclerToday)
         recyclerToday.layoutManager = LinearLayoutManager(context)
         recyclerToday.adapter = mAdapter
@@ -47,17 +58,14 @@ class TodayFragment : Fragment() {
                 mViewModel.getTaskById(id)
             }
 
-            override fun onDeleteTaskClick(id: String) {
-                mViewModel.deleteTask(id)
+            override fun onDeleteTaskClick(task: TaskModel) {
+                mViewModel.delete(task)
             }
 
-            override fun onDoneTaskClick(id: String) {
-                mViewModel.completeTask(id)
+            override fun onChangeCompleteTaskClick(id: String, statusTask: Boolean) {
+                mViewModel.onChangeCompleteTaskClick(id, statusTask)
             }
 
-            override fun onUndoTaskClick(id: String) {
-                mViewModel.undoTask(id)
-            }
         }
 
         observe()
@@ -67,13 +75,21 @@ class TodayFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         mAdapter.attachListener(mListener)
-        mViewModel.getListTasks()
+        mViewModel.getListTasks(user.uid)
     }
 
     private fun observe() {
         mViewModel.listTasks.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 mAdapter.updateList(it)
+            }
+        })
+
+        mViewModel.validation.observe(viewLifecycleOwner, Observer {
+            if (it.isSuccess()) {
+                Toast.makeText(context, it.getSuccessMessage(), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, it.getErrorMessage(), Toast.LENGTH_SHORT).show()
             }
         })
     }

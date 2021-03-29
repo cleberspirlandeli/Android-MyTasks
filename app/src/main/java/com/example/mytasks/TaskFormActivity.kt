@@ -41,17 +41,17 @@ class TaskFormActivity : AppCompatActivity(),
     TimePickerDialog.OnTimeSetListener,
     CompoundButton.OnCheckedChangeListener {
 
-    private var day = 0
-    private var month = 0
-    private var year = 0
-    private var hour = 0
-    private var minute = 0
+    private var _dayOfMonth = 0
+    private var _month = 0
+    private var _year = 0
+    private var _hour = 0
+    private var _minute = 0
 
-    private var savedDay = 0
-    private var savedMonth = 0
-    private var savedYear = 0
-    private var savedHour = 0
-    private var savedMinute = 0
+//    private var savedDay = 0
+//    private var savedMonth = 0
+//    private var savedYear = 0
+//    private var savedHour = 0
+//    private var savedMinute = 0
 
     lateinit var db: FirebaseFirestore
     private var items = arrayOf<String>()
@@ -128,6 +128,7 @@ class TaskFormActivity : AppCompatActivity(),
     private fun setActualDateAndHours() {
         getDateTimeCalendar()
 
+
         var dataAtual = Calendar.getInstance()
         dataAtual.set(Calendar.HOUR_OF_DAY, Date().hours + 1)
         var data = dataAtual.getTime()
@@ -135,6 +136,8 @@ class TaskFormActivity : AppCompatActivity(),
         var dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm");
 
         var hoje = dateFormat.format(data);
+
+        _hour = dataAtual.get(Calendar.HOUR_OF_DAY)
 
         btnDate.text = hoje
     }
@@ -234,9 +237,9 @@ class TaskFormActivity : AppCompatActivity(),
 
         getDateTimeCalendar()
         val randomString = java.util.UUID.randomUUID().toString()
+        var namePhoto = "${randomString}_${_dayOfMonth}-${_month}-${_year}.jpg"
 
-        // Create a reference to "mountains.jpg"
-        taskRef = storageRef.child("${randomString}_${day}-${month}-${year}.jpg");
+        taskRef = storageRef.child(namePhoto);
 
         val baos = ByteArrayOutputStream()
         imageBitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
@@ -254,7 +257,7 @@ class TaskFormActivity : AppCompatActivity(),
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val downloadUri = task.result.toString()
-                saveTaskInFirebase(downloadUri)
+                saveTaskInFirebase(downloadUri, namePhoto)
             } else {
                 // Handle failures
                 // ...
@@ -284,14 +287,14 @@ class TaskFormActivity : AppCompatActivity(),
         return error
     }
 
-    private fun saveTaskInFirebase(uriImage: String = "") {
+    private fun saveTaskInFirebase(uriImage: String = "", namePhoto: String = "") {
 
         val calendar = Calendar.getInstance()
-        calendar[Calendar.YEAR] = savedYear
-        calendar[Calendar.MONTH] = savedMonth
-        calendar[Calendar.DAY_OF_MONTH] = savedDay
-        calendar[Calendar.HOUR_OF_DAY] = savedHour
-        calendar[Calendar.MINUTE] = savedMinute
+        calendar[Calendar.YEAR] = _year
+        calendar[Calendar.MONTH] = _month
+        calendar[Calendar.DAY_OF_MONTH] = _dayOfMonth
+        calendar[Calendar.HOUR_OF_DAY] = _hour
+        calendar[Calendar.MINUTE] = _minute
         calendar[Calendar.SECOND] = 0
         val timestamp: Long = calendar.timeInMillis
 
@@ -307,7 +310,8 @@ class TaskFormActivity : AppCompatActivity(),
             swtComplete.isChecked,
             timestamp,
             txtDescription.text.toString(),
-            uriImage
+            uriImage,
+            namePhoto
         )
 
         db.collection("tasks")
@@ -323,8 +327,8 @@ class TaskFormActivity : AppCompatActivity(),
                 toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0)
                 toast.view = layoutInflater.inflate(R.layout.toast_layout, null)
 
-                progressButton.buttonFinish()
                 finish()
+                progressButton.buttonFinish()
 
                 toast.show()
             }
@@ -336,38 +340,35 @@ class TaskFormActivity : AppCompatActivity(),
 
     private fun getDateTimeCalendar() {
         val cal: Calendar = Calendar.getInstance()
-        day = cal.get(Calendar.DAY_OF_MONTH)
-        month = cal.get(Calendar.MONTH)
-        year = cal.get(Calendar.YEAR)
-        hour = cal.get(Calendar.HOUR_OF_DAY)
-        minute = cal.get(Calendar.MINUTE)
+        _dayOfMonth = cal.get(Calendar.DAY_OF_MONTH)
+        _month = cal.get(Calendar.MONTH)
+        _year = cal.get(Calendar.YEAR)
+        _hour = cal.get(Calendar.HOUR_OF_DAY)
+        _minute = cal.get(Calendar.MINUTE)
     }
 
     private fun openDatePicker() {
         getDateTimeCalendar()
 
-        var datePickerDialog = DatePickerDialog(this, this, year, month, day)
+        var datePickerDialog = DatePickerDialog(this, this, _year, _month, _dayOfMonth)
         datePickerDialog.datePicker.minDate = Calendar.getInstance().timeInMillis
         datePickerDialog.show()
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        savedYear = year
-        savedMonth = month
-        savedDay = dayOfMonth
+        _year = year
+        _month = month
+        _dayOfMonth = dayOfMonth
 
         getDateTimeCalendar()
-        TimePickerDialog(this, this, hour, minute, true).show()
+        TimePickerDialog(this, this, _hour, _minute, true).show()
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        savedHour = hourOfDay
-        savedMinute = minute
-
         var date =
-            "${formatNumber(savedDay)}/${formatNumber(savedMonth + 1)}/${savedYear} ${formatNumber(
-                savedHour
-            )}:${formatNumber(savedMinute)}"
+            "${formatNumber(_dayOfMonth)}/${formatNumber(_month + 1)}/${_year} ${formatNumber(
+                _hour
+            )}:${formatNumber(minute)}"
 
         btnDate.text = date
     }

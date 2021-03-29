@@ -1,5 +1,7 @@
 package com.example.mytasks.listener
 
+import com.example.mytasks.service.model.TaskModel
+
 interface TaskListener {
 
     /**
@@ -12,18 +14,12 @@ interface TaskListener {
      * Delete
      * Remoção
      */
-    fun onDeleteTaskClick(id: String)
+    fun onDeleteTaskClick(task: TaskModel)
 
     /**
      * Done Task
      * Completa tarefa
      */
-    fun onDoneTaskClick(id: String)
-
-    /**
-     * Undo Task
-     * Descompleta tarefa
-     */
-    fun onUndoTaskClick(id: String)
+    fun onChangeCompleteTaskClick(id: String, statusTask: Boolean)
 
 }

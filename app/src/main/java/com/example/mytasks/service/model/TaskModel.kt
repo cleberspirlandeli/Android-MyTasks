@@ -7,7 +7,8 @@ class TaskModel (
     var complete: Boolean? = false,
     var date: Long? = null,
     var description: String? = null,
-    var image: String? = null
+    var image: String? = null,
+    var namePhoto: String? = null
 ) : CommonModel()
 
 //    constructor() {}
