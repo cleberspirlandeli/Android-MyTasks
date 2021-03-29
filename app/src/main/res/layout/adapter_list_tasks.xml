@@ -8,27 +8,81 @@
     android:orientation="vertical"
     android:padding="8dp">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_view_task"
+    <!-- ADMOB -->
+    <!--  google.com, pub-2435307357987224, DIRECT, f08c47fec0942fa0  -->
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical"
         tools:ignore="MissingConstraints">
+
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayoutNoData"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp"
+                >
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="50dp"
+                    android:layout_height="52dp"
+                    android:src="@drawable/sad_icon"
+                    app:layout_constraintBottom_toTopOf="@+id/textView5"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="you have no tasks"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/imageView2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_editor_absoluteX="16dp" />
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="48dp"
+                    android:text="add and complete a new task"
+                    android:textAllCaps="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_view_task"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
 
                 <ImageView
                     android:id="@+id/img_photo_task"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:scaleType="center"
-                    android:src="@drawable/ic_baseline_hide_image_24"
-                     />
+                    android:src="@drawable/ic_baseline_hide_image_24" />
 
                 <ImageView
                     android:id="@+id/img_btn_delete_task"
@@ -53,23 +107,23 @@
                     android:id="@+id/txt_date_task"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="casual"
                     android:gravity="center"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:shadowColor="#000"
+                    android:shadowDx="5"
+                    android:shadowDy="4"
+                    android:shadowRadius="6"
                     android:text="25/03/2021 15:30"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="28dp"
                     android:textStyle="bold"
-                    android:paddingEnd="10dp"
-                    android:paddingStart="10dp"
-                    android:fontFamily="casual"
-                    android:shadowColor="#000"
-                    android:shadowDx="5"
-                    android:shadowDy="4"
-                    android:shadowRadius="6"
-                    app:layout_constraintTop_toBottomOf="@+id/img_photo_task"
                     app:layout_constraintBottom_toBottomOf="@+id/img_photo_task"
                     app:layout_constraintEnd_toEndOf="@+id/img_photo_task"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/img_photo_task" />
 
                 <TextView
                     android:id="@+id/txt_name_task"
@@ -78,8 +132,8 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="2dp"
                     android:layout_marginEnd="16dp"
-                    android:text="Ir ao Santander falar com o gerente"
                     android:gravity="center"
+                    android:text="Ir ao Santander falar com o gerente"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="18dp"
@@ -117,7 +171,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
-                        android:text="Refazer"/>
+                        android:text="Refazer" />
 
                     <Button
                         android:id="@+id/btn_done_task"
@@ -129,9 +183,56 @@
                         android:text="Concluir" />
                 </androidx.cardview.widget.CardView>
 
+                <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/adView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+                    ads:adSize="SMART_BANNER"
+                    ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
+                    ads:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/card_view_buttons" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardViewAdViewMediumRectangle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            tools:ignore="MissingConstraints">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.gms.ads.AdView
+                    android:id="@+id/adViewMediumRectangle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    app:adSize="MEDIUM_RECTANGLE"
+                    app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

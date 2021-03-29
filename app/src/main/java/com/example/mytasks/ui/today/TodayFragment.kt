@@ -15,6 +15,9 @@ import com.example.mytasks.R
 import com.example.mytasks.adapter.ListTasksAdapter
 import com.example.mytasks.listener.TaskListener
 import com.example.mytasks.service.model.TaskModel
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -26,7 +29,6 @@ class TodayFragment : Fragment() {
     // FIREBASE
     private lateinit var auth: FirebaseAuth
     private lateinit var user: FirebaseUser
-
 
     private lateinit var mViewModel: TodayViewModel
     private lateinit var mListener: TaskListener

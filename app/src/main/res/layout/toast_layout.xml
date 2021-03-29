@@ -7,8 +7,9 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="270dp"
-        android:layout_height="100dp"
+        android:layout_height="70dp"
         android:elevation="5dp"
+        app:cardCornerRadius="20dp"
         app:cardBackgroundColor="@color/teal_700"
         tools:ignore="MissingConstraints">
 

@@ -14,6 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyTasks">
 
+        <!-- ADMOB -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-2435307357987224~3218466148"/>
+
         <!-- FACEBOOK -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

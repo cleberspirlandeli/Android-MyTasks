@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.Typeface
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,13 +15,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.size
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mytasks.R
 import com.example.mytasks.common.constants.TaskConstants
 import com.example.mytasks.listener.TaskListener
 import com.example.mytasks.service.model.TaskModel
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import kotlinx.android.synthetic.main.activity_task_form.*
 import java.text.SimpleDateFormat
 
@@ -36,11 +42,11 @@ class ListTasksAdapter : RecyclerView.Adapter<TaskViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return mList.count()
+        return mList.size
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        holder.bindData(mList[position])
+        holder.bindData(mList[position], position, itemCount)
     }
 
     fun attachListener(listener: TaskListener) {
@@ -63,6 +69,7 @@ class TaskViewHolder(itemView: View, val listener: TaskListener) :
     private lateinit var time: String
 
     private var mCardViewTask: CardView = itemView.findViewById(R.id.card_view_task)
+    private var mCardViewNoData: ConstraintLayout = itemView.findViewById(R.id.constraintLayoutNoData)
 
     private var mImagePriority: ImageView = itemView.findViewById(R.id.img_priority_task)
     private var mImagePhoto: ImageView = itemView.findViewById(R.id.img_photo_task)
@@ -74,6 +81,10 @@ class TaskViewHolder(itemView: View, val listener: TaskListener) :
     private var mBtnDelete: ImageView = itemView.findViewById(R.id.img_btn_delete_task)
     private var mBtnUndo: Button = itemView.findViewById(R.id.btn_undo_task)
     private var mBtnDone: Button = itemView.findViewById(R.id.btn_done_task)
+
+    private var mAdView: AdView = itemView.findViewById(R.id.adView)
+    private var mCardViewAdViewMediumRectangle: CardView = itemView.findViewById(R.id.cardViewAdViewMediumRectangle)
+    private var mAdViewMediumRectangle: AdView = itemView.findViewById(R.id.adViewMediumRectangle)
 
     val myDrawableCompleteTask =
         ContextCompat.getDrawable(itemView.context, R.drawable.ic_baseline_check_circle_outline_24)
@@ -87,7 +98,25 @@ class TaskViewHolder(itemView: View, val listener: TaskListener) :
     val myDrawablePhoto =
         ContextCompat.getDrawable(itemView.context, R.drawable.ic_baseline_hide_image_24)
 
-    fun bindData(task: TaskModel) {
+    fun bindData(task: TaskModel, position: Int, sizeList: Int) {
+
+        if (sizeList == 0) {
+            noDataList()
+        } else {
+            containsItemInList()
+        }
+
+        if (position > 0 && ((position % 4) == 0) ) {
+            addAdMobSmartBanner()
+        } else {
+            removeAdMobSmartBanner()
+        }
+
+        if (position > 0 && (((position % 6) == 0) || position == sizeList -1 )) {
+            addAdMobMediumRectangleBanner()
+        } else {
+            removeAdMobMediumRectangleBanner()
+        }
 
         mImagePhoto.setImageDrawable(myDrawableLoading)
 
@@ -142,17 +171,6 @@ class TaskViewHolder(itemView: View, val listener: TaskListener) :
                     mImagePriority.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN)
                 }
             }
-
-//            if (task.priority == 0) {
-//                myDrawablePriority?.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN)
-//                mImagePriority.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN)
-//            } else if (task.priority == 1) {
-//                myDrawablePriority?.setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN)
-//                mImagePriority.setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN)
-//            } else if (task.priority == 2){
-//                myDrawablePriority?.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN)
-//                mImagePriority.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN)
-//            }
         }
 
         // Events
@@ -196,6 +214,42 @@ class TaskViewHolder(itemView: View, val listener: TaskListener) :
             true
         }
 
+    }
+
+    private fun containsItemInList() {
+        mCardViewNoData.visibility = View.GONE
+        mCardViewTask.visibility = View.VISIBLE
+        mCardViewAdViewMediumRectangle.visibility = View.VISIBLE
+    }
+
+    private fun noDataList() {
+        mCardViewNoData.visibility = View.VISIBLE
+        mCardViewTask.visibility = View.GONE
+        mCardViewAdViewMediumRectangle.visibility = View.GONE
+    }
+
+    private fun addAdMobMediumRectangleBanner() {
+        val adRequest = AdRequest.Builder().build()
+        // mCardViewAdViewMediumRectangle.adUnitId = ""
+        mAdViewMediumRectangle.loadAd(adRequest)
+        mCardViewAdViewMediumRectangle.visibility = View.VISIBLE
+    }
+
+    private fun removeAdMobMediumRectangleBanner() {
+        mCardViewAdViewMediumRectangle.visibility = View.GONE
+    }
+
+
+
+    private fun addAdMobSmartBanner() {
+        val adRequest = AdRequest.Builder().build()
+        //        adView.adUnitId = ""
+        mAdView.loadAd(adRequest)
+        mAdView.visibility = View.VISIBLE
+    }
+
+    private fun removeAdMobSmartBanner() {
+        mAdView.visibility = View.GONE
     }
 
 }
