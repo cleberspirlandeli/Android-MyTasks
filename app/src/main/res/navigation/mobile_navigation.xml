@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
+        android:id="@+id/nav_next_week"
+        android:name="com.example.mytasks.ui.nextWeek.NextWeekFragment"
+        android:label="@string/next_week"
+        tools:layout="@layout/fragment_today" />
+
+    <fragment
         android:id="@+id/nav_slideshow"
         android:name="com.example.mytasks.ui.done.DoneFragment"
         android:label="@string/menu_done"

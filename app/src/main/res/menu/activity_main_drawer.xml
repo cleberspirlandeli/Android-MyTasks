@@ -12,6 +12,12 @@
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_baseline_next_plan_24"
             android:title="@string/task_this_week" />
+
+        <item
+            android:id="@+id/nav_next_week"
+            android:icon="@drawable/ic_baseline_next_plan_24"
+            android:title="@string/next_week" />
+
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_baseline_check_circle_outline_24"

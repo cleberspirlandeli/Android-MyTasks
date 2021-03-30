@@ -41,6 +41,7 @@
     <string name="txt_dialog_choose">Escolher</string>
     <string name="task_today">Hoje</string>
     <string name="task_this_week">Essa semana</string>
+    <string name="next_week">Próxima Semana</string>
     <string name="task_done">Concluidos</string>
 
     <!--  TASK FORM  -->

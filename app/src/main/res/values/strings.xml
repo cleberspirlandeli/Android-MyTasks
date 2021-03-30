@@ -56,6 +56,7 @@
     <string name="confirme_done_task">Did you complete this task?</string>
     <string name="task_removed_successfully">Task successfully removed</string>
     <string name="task_updated_successfully">Task successfully updated</string>
+    <string name="next_week">Next Week</string>
 
 
     <!--  ITEMS PRIORITY  -->

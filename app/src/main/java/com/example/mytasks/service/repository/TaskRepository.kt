@@ -1,4 +1,4 @@
-package com.example.mytasks.service.repository
+package com.example.mytasks.service.repositorygetStartAndEndDayOfNextWeek
 
 import android.content.Context
 import android.util.Log
@@ -111,7 +111,7 @@ class TaskRepository(context: Context) {
             }
     }
 
-    fun getListThisWeekTasks(uid: String, filters: GenericModel, cb: ApiCallbackListener<List<TaskModel>>) {
+    fun getListWeekByFilterTasks(uid: String, filters: GenericModel, cb: ApiCallbackListener<List<TaskModel>>) {
         var taskList: MutableList<TaskModel> = ArrayList()
 
         tasksRef
