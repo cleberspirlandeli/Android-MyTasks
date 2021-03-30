@@ -3,6 +3,7 @@ package com.example.mytasks.service.repository
 import android.content.Context
 import android.util.Log
 import com.example.mytasks.listener.ApiCallbackListener
+import com.example.mytasks.service.model.GenericModel
 import com.example.mytasks.service.model.TaskModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -17,7 +18,7 @@ class TaskRepository(context: Context) {
     private val storage = FirebaseStorage.getInstance()
 
     fun getListTask(
-        id: String,
+        uid: String,
         startDay: Long,
         endDay: Long,
         cb: ApiCallbackListener<List<TaskModel>>
@@ -25,7 +26,7 @@ class TaskRepository(context: Context) {
         var taskList: MutableList<TaskModel> = ArrayList()
 
         tasksRef
-            .whereEqualTo("userId", id)
+            .whereEqualTo("userId", uid)
             .whereGreaterThanOrEqualTo("date", startDay)
             .whereLessThanOrEqualTo("date", endDay)
             .orderBy("date", Query.Direction.ASCENDING)
@@ -93,6 +94,30 @@ class TaskRepository(context: Context) {
         tasksRef
             .whereEqualTo("userId", id)
             .whereEqualTo("complete", true)
+            .orderBy("date", Query.Direction.ASCENDING)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    Log.d("Firestore Success", "${document.id} => ${document.data}")
+                    val task: TaskModel =
+                        document.toObject(TaskModel::class.java).withId(document.id)
+                    taskList.add(task)
+                }
+                cb.onSuccess(taskList)
+            }
+            .addOnFailureListener { exception ->
+                Log.w("Firestore Failure", "Error getting documents: ", exception)
+                cb.onFailure("Error getting documents: ${exception.toString()}")
+            }
+    }
+
+    fun getListThisWeekTasks(uid: String, filters: GenericModel, cb: ApiCallbackListener<List<TaskModel>>) {
+        var taskList: MutableList<TaskModel> = ArrayList()
+
+        tasksRef
+            .whereEqualTo("userId", uid)
+            .whereGreaterThanOrEqualTo("date", filters.startDate!!)
+            .whereLessThanOrEqualTo("date", filters.endDate!!)
             .orderBy("date", Query.Direction.ASCENDING)
             .get()
             .addOnSuccessListener { documents ->

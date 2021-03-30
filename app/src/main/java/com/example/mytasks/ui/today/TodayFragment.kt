@@ -80,7 +80,7 @@ class TodayFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         mAdapter.attachListener(mListener)
-        mViewModel.getListAllTasks(user.uid)
+        mViewModel.getListAllTasks()
     }
 
     private fun observe() {

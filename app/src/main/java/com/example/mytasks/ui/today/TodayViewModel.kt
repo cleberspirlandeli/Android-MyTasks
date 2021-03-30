@@ -8,6 +8,7 @@ import com.example.mytasks.R
 import com.example.mytasks.common.constants.ScreenFilterConstants
 import com.example.mytasks.listener.ApiCallbackListener
 import com.example.mytasks.listener.ValidationListener
+import com.example.mytasks.service.model.GenericModel
 import com.example.mytasks.service.model.TaskModel
 import com.example.mytasks.service.repository.TaskRepository
 import com.google.firebase.auth.ktx.auth
@@ -98,7 +99,65 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
         return calendar.timeInMillis
     }
 
-    fun getListAllTasks(id: String) {
+    private fun getStartAndEndDayOfWeek(): GenericModel {
+        val calendar = Calendar.getInstance()
+        val calendarStart = Calendar.getInstance()
+        val calendarEnd = Calendar.getInstance()
+
+        val day = calendar.get(Calendar.DAY_OF_WEEK)
+
+        when (day) {
+            // SEGUNDA
+            Calendar.MONDAY -> {
+                calendarStart.add(Calendar.DAY_OF_MONTH, -1)
+                calendarEnd.add(Calendar.DAY_OF_MONTH, 5)
+            }
+
+            // TERÇA-FEIRA
+            Calendar.TUESDAY -> {
+                calendarStart.add(Calendar.DAY_OF_MONTH, -2)
+                calendarEnd.add(Calendar.DAY_OF_MONTH, 4)
+            }
+
+            // QUARTA-FEIRA
+            Calendar.WEDNESDAY -> {
+                calendarStart.add(Calendar.DAY_OF_MONTH, -3)
+                calendarEnd.add(Calendar.DAY_OF_MONTH, 3)
+            }
+
+            // QUINTA-FEIRA
+            Calendar.THURSDAY -> {
+                calendarStart.add(Calendar.DAY_OF_MONTH, -4)
+                calendarEnd.add(Calendar.DAY_OF_MONTH, 2)
+            }
+
+            // SEXTA-FEIRA
+            Calendar.FRIDAY -> {
+                calendarStart.add(Calendar.DAY_OF_MONTH, -5)
+                calendarEnd.add(Calendar.DAY_OF_MONTH, 2)
+            }
+
+            // SABADO-FEIRA
+            Calendar.SATURDAY -> {
+                calendarStart.add(Calendar.DAY_OF_MONTH, -6)
+                calendarEnd.add(Calendar.DAY_OF_MONTH, 1)
+            }
+
+            // DOMINGO-FEIRA
+            Calendar.SUNDAY -> {
+                calendarEnd.add(Calendar.DAY_OF_MONTH, 6)
+            }
+        }
+
+        val obj = GenericModel().apply {
+            startDate = calendarStart.timeInMillis
+            endDate = calendarEnd.timeInMillis
+        }
+
+        return obj
+    }
+
+    fun getListAllTasks() {
 
         var startDay = getStartOfDay()
         var endDay = getEndOfDay()
@@ -114,7 +173,7 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
-        mTaskRepository.getListTask(id, startDay, endDay, listener)
+        mTaskRepository.getListTask(user.uid, startDay, endDay, listener)
     }
 
     fun getListDoneTasks(id: String) {
@@ -151,4 +210,22 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
 
         mTaskRepository.onChangeCompleteTaskClick(id, statusTask, listener)
     }
+
+    fun getListThisWeekTasks() {
+        val listener = object : ApiCallbackListener<List<TaskModel>> {
+
+            override fun onSuccess(result: List<TaskModel>?, statusCode: Int?) {
+                _listTasks.value = result
+            }
+
+            override fun onFailure(message: String) {
+                _listTasks.value = null
+            }
+        }
+
+        val filters = getStartAndEndDayOfWeek()
+        mTaskRepository.getListThisWeekTasks(user.uid, filters, listener)
+    }
 }
+
+
