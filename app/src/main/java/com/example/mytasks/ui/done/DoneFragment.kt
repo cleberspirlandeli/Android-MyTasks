@@ -1,7 +1,6 @@
-package com.example.mytasks.ui.today
+package com.example.mytasks.ui.done
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -18,37 +17,32 @@ import com.example.mytasks.adapter.ListTasksAdapter
 import com.example.mytasks.common.constants.ScreenFilterConstants
 import com.example.mytasks.listener.TaskListener
 import com.example.mytasks.service.model.TaskModel
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.MobileAds
+import com.example.mytasks.ui.today.TodayViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-
-class TodayFragment : Fragment() {
+class DoneFragment : Fragment() {
 
     // FIREBASE
     private lateinit var auth: FirebaseAuth
     private lateinit var user: FirebaseUser
 
-    private lateinit var mViewModel: TodayViewModel
+    private lateinit var mTodayViewModel: TodayViewModel
     private lateinit var mListener: TaskListener
 
 
     private val mAdapter = ListTasksAdapter()
 
-
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
 
-        mViewModel =
-            ViewModelProvider(this).get(TodayViewModel::class.java)
-
+        mTodayViewModel =
+                ViewModelProvider(this).get(TodayViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_today, container, false)
 
         auth = Firebase.auth
@@ -60,15 +54,15 @@ class TodayFragment : Fragment() {
 
         mListener = object : TaskListener {
             override fun onViewTaskClick(id: String) {
-                mViewModel.getTaskById(id)
+                mTodayViewModel.getTaskById(id)
             }
 
             override fun onDeleteTaskClick(task: TaskModel) {
-                mViewModel.delete(task, ScreenFilterConstants.SCREEN.TODAY)
+                mTodayViewModel.delete(task, ScreenFilterConstants.SCREEN.DONE)
             }
 
             override fun onChangeCompleteTaskClick(id: String, statusTask: Boolean) {
-                mViewModel.onChangeCompleteTaskClick(id, statusTask, ScreenFilterConstants.SCREEN.TODAY)
+                mTodayViewModel.onChangeCompleteTaskClick(id, statusTask, ScreenFilterConstants.SCREEN.DONE)
             }
 
         }
@@ -80,17 +74,17 @@ class TodayFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         mAdapter.attachListener(mListener)
-        mViewModel.getListAllTasks(user.uid)
+        mTodayViewModel.getListDoneTasks(user.uid)
     }
 
     private fun observe() {
-        mViewModel.listTasks.observe(viewLifecycleOwner, Observer {
+        mTodayViewModel.listTasks.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 mAdapter.updateList(it)
             }
         })
 
-        mViewModel.validation.observe(viewLifecycleOwner, Observer {
+        mTodayViewModel.validation.observe(viewLifecycleOwner, Observer {
             if (it.isSuccess()) {
                 val layout = layoutInflater.inflate(R.layout.toast_layout, null)
                 val textV = layout.findViewById<TextView>(R.id.txt_toast)
@@ -107,5 +101,4 @@ class TodayFragment : Fragment() {
             }
         })
     }
-
 }

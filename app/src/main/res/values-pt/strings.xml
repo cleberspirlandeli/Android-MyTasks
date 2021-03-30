@@ -56,6 +56,13 @@
     <string name="yes">Sim</string>
     <string name="cancel">Cancelar</string>
 
+    <string name="undo_task">Remover Tarefa</string>
+    <string name="confirme_undo_task">Você quer desfazer esta tarefa?</string>
+    <string name="done_task">Concluir Tarefa</string>
+    <string name="confirme_done_task">Você completou esta tarefa?</string>
+    <string name="task_removed_successfully">Tarefa removida com sucesso</string>
+    <string name="task_updated_successfully">Tarefa atualizada com sucesso</string>
+
     <!--  ITEMS PRIORITY  -->
     <string-array name="priorities_array">
         <item>Baixo</item>

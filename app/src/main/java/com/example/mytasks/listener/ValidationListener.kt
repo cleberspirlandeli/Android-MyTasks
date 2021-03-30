@@ -15,6 +15,6 @@ class ValidationListener(successMessage: String? = "", errorMessage: String? = "
     }
 
     fun isSuccess() = mStatus
-    fun getErrorMessage() = mErrorMessage
-    fun getSuccessMessage() = mSuccessMessage
+    fun getErrorMessage() = mErrorMessage.toString()
+    fun getSuccessMessage() = mSuccessMessage.toString()
 }

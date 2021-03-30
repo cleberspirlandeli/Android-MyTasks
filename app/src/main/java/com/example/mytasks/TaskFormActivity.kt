@@ -296,6 +296,7 @@ class TaskFormActivity : AppCompatActivity(),
         calendar[Calendar.HOUR_OF_DAY] = _hour
         calendar[Calendar.MINUTE] = _minute
         calendar[Calendar.SECOND] = 0
+        var date = calendar.time
         val timestamp: Long = calendar.timeInMillis
 
 //        val currentDate = SimpleDateFormat("dd/MM/yyyy").format(timestamp)
@@ -324,7 +325,7 @@ class TaskFormActivity : AppCompatActivity(),
 
                 val toast =
                     Toast.makeText(this, R.string.task_successfully_created, Toast.LENGTH_SHORT)
-                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0)
+                toast.setGravity(Gravity.BOTTOM, 0, 20)
                 toast.view = layoutInflater.inflate(R.layout.toast_layout, null)
 
                 finish()
@@ -356,19 +357,23 @@ class TaskFormActivity : AppCompatActivity(),
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+        getDateTimeCalendar()
+
         _year = year
         _month = month
         _dayOfMonth = dayOfMonth
 
-        getDateTimeCalendar()
         TimePickerDialog(this, this, _hour, _minute, true).show()
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
+        _hour = hourOfDay
+        _minute = minute
+
         var date =
             "${formatNumber(_dayOfMonth)}/${formatNumber(_month + 1)}/${_year} ${formatNumber(
                 _hour
-            )}:${formatNumber(minute)}"
+            )}:${formatNumber(_minute)}"
 
         btnDate.text = date
     }

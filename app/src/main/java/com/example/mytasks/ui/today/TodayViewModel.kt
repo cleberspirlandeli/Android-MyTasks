@@ -5,14 +5,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.mytasks.R
+import com.example.mytasks.common.constants.ScreenFilterConstants
 import com.example.mytasks.listener.ApiCallbackListener
 import com.example.mytasks.listener.ValidationListener
 import com.example.mytasks.service.model.TaskModel
 import com.example.mytasks.service.repository.TaskRepository
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 class TodayViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -32,7 +32,7 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
     // REPOSITORY
     private val mTaskRepository: TaskRepository = TaskRepository(application)
 
-    fun delete(task: TaskModel) {
+    fun delete(task: TaskModel, screen: Int) {
 
         task.image.let {
             if (!it.isNullOrEmpty()) {
@@ -40,13 +40,13 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
-        task.id?.let { deleteTask(it) }
+        task.id?.let { deleteTask(it, screen) }
     }
 
-    private fun deleteTask(id: String) {
+    private fun deleteTask(id: String, screen: Int) {
         val listener = object : ApiCallbackListener<String> {
             override fun onSuccess(result: String?, statusCode: Int?) {
-                getListTasks(user.uid)
+                getListByTypeScreen(screen)
                 _validation.value =
                     ValidationListener(successMessage = context.getString(R.string.task_removed_successfully))
             }
@@ -57,6 +57,13 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         mTaskRepository.deleteTask(id, listener)
+    }
+
+    private fun getListByTypeScreen(screen: Int) {
+        when (screen) {
+            ScreenFilterConstants.SCREEN.TODAY -> getListAllTasks(user.uid)
+            ScreenFilterConstants.SCREEN.DONE -> getListDoneTasks(user.uid)
+        }
     }
 
     private fun deletePhoto(imageUrl: String) {
@@ -73,7 +80,28 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
         mTaskRepository.deletePhoto(imageUrl, listener)
     }
 
-    fun getListTasks(id: String) {
+    private fun getStartOfDay(): Long {
+        val calendar = Calendar.getInstance()
+        val year = calendar[Calendar.YEAR]
+        val month = calendar[Calendar.MONTH]
+        val day = calendar[Calendar.DATE]
+        calendar.set(year, month, day, 0, 0, 0)
+        return calendar.timeInMillis
+    }
+
+    private fun getEndOfDay(): Long {
+        val calendar = Calendar.getInstance()
+        val year = calendar[Calendar.YEAR]
+        val month = calendar[Calendar.MONTH]
+        val day = calendar[Calendar.DATE]
+        calendar.set(year, month, day, 23, 59, 59)
+        return calendar.timeInMillis
+    }
+
+    fun getListAllTasks(id: String) {
+
+        var startDay = getStartOfDay()
+        var endDay = getEndOfDay()
 
         val listener = object : ApiCallbackListener<List<TaskModel>> {
 
@@ -86,15 +114,32 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
-        mTaskRepository.getListTask(id, listener)
+        mTaskRepository.getListTask(id, startDay, endDay, listener)
+    }
+
+    fun getListDoneTasks(id: String) {
+
+        val listener = object : ApiCallbackListener<List<TaskModel>> {
+
+            override fun onSuccess(result: List<TaskModel>?, statusCode: Int?) {
+                _listTasks.value = result
+            }
+
+            override fun onFailure(message: String) {
+                _listTasks.value = null
+            }
+        }
+
+        mTaskRepository.getListDoneTasks(id, listener)
     }
 
     fun getTaskById(id: String) {}
 
-    fun onChangeCompleteTaskClick(id: String, statusTask: Boolean) {
+    fun onChangeCompleteTaskClick(id: String, statusTask: Boolean, screen: Int) {
+
         val listener = object : ApiCallbackListener<String> {
             override fun onSuccess(result: String?, statusCode: Int?) {
-                getListTasks(user.uid)
+                getListByTypeScreen(screen)
                 _validation.value =
                     ValidationListener(successMessage = context.getString(R.string.task_updated_successfully))
             }

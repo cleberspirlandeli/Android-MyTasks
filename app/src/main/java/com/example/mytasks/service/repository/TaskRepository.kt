@@ -16,11 +16,18 @@ class TaskRepository(context: Context) {
     private val tasksRef = database.collection("tasks")
     private val storage = FirebaseStorage.getInstance()
 
-    fun getListTask(id: String, cb: ApiCallbackListener<List<TaskModel>>) {
+    fun getListTask(
+        id: String,
+        startDay: Long,
+        endDay: Long,
+        cb: ApiCallbackListener<List<TaskModel>>
+    ) {
         var taskList: MutableList<TaskModel> = ArrayList()
 
         tasksRef
             .whereEqualTo("userId", id)
+            .whereGreaterThanOrEqualTo("date", startDay)
+            .whereLessThanOrEqualTo("date", endDay)
             .orderBy("date", Query.Direction.ASCENDING)
             .get()
             .addOnSuccessListener { documents ->
@@ -47,7 +54,7 @@ class TaskRepository(context: Context) {
             }
             .addOnFailureListener { e ->
                 Log.w("deleteTask", "Error deleting document", e)
-                cb.onFailure("Error deleting document: ${e.toString()}" )
+                cb.onFailure("Error deleting document: ${e.toString()}")
             }
     }
 
@@ -64,7 +71,11 @@ class TaskRepository(context: Context) {
             }
     }
 
-    fun onChangeCompleteTaskClick(id: String, statusTask: Boolean, cb: ApiCallbackListener<String>) {
+    fun onChangeCompleteTaskClick(
+        id: String,
+        statusTask: Boolean,
+        cb: ApiCallbackListener<String>
+    ) {
         tasksRef
             .document(id)
             .update("complete", statusTask)
@@ -73,6 +84,29 @@ class TaskRepository(context: Context) {
             }
             .addOnFailureListener {
                 cb.onFailure(it.message.toString())
+            }
+    }
+
+    fun getListDoneTasks(id: String, cb: ApiCallbackListener<List<TaskModel>>) {
+        var taskList: MutableList<TaskModel> = ArrayList()
+
+        tasksRef
+            .whereEqualTo("userId", id)
+            .whereEqualTo("complete", true)
+            .orderBy("date", Query.Direction.ASCENDING)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    Log.d("Firestore Success", "${document.id} => ${document.data}")
+                    val task: TaskModel =
+                        document.toObject(TaskModel::class.java).withId(document.id)
+                    taskList.add(task)
+                }
+                cb.onSuccess(taskList)
+            }
+            .addOnFailureListener { exception ->
+                Log.w("Firestore Failure", "Error getting documents: ", exception)
+                cb.onFailure("Error getting documents: ${exception.toString()}")
             }
     }
 }
