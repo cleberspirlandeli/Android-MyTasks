@@ -24,6 +24,9 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
     private val user = auth.currentUser
 
     // OBSERVERS
+    private val _isLoading = MutableLiveData<Boolean>(false)
+    val isLoading: LiveData<Boolean> = _isLoading
+
     private val _validation = MutableLiveData<ValidationListener>()
     val validation: LiveData<ValidationListener> = _validation
 
@@ -39,10 +42,12 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
 
         override fun onSuccess(result: List<TaskModel>?, statusCode: Int?) {
             _listTasks.value = result
+            setLoading()
         }
 
         override fun onFailure(message: String) {
             _listTasks.value = null
+            setLoading()
         }
     }
 
@@ -233,6 +238,7 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getListAllTasks() {
+        setLoading()
 
         var startDay = getStartOfDay()
         var endDay = getEndOfDay()
@@ -240,16 +246,22 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
         mTaskRepository.getListTask(user.uid, startDay.timeInMillis, endDay.timeInMillis, mApiCallbackListener)
     }
 
-    fun getListDoneTasks() {
+    private fun setLoading() {
+        _isLoading.value = !_isLoading.value!!
+    }
 
+    fun getListDoneTasks() {
+        setLoading()
         val listener = object : ApiCallbackListener<List<TaskModel>> {
 
             override fun onSuccess(result: List<TaskModel>?, statusCode: Int?) {
                 _listTasks.value = result
+                setLoading()
             }
 
             override fun onFailure(message: String) {
                 _listTasks.value = null
+                setLoading()
             }
         }
 
@@ -259,16 +271,18 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
     fun getTaskById(id: String) {}
 
     fun onChangeCompleteTaskClick(id: String, statusTask: Boolean, screen: Int) {
-
+        setLoading()
         val listener = object : ApiCallbackListener<String> {
             override fun onSuccess(result: String?, statusCode: Int?) {
                 getListByTypeScreen(screen)
                 _validation.value =
                     ValidationListener(successMessage = context.getString(R.string.task_updated_successfully))
+                setLoading()
             }
 
             override fun onFailure(message: String) {
                 _validation.value = ValidationListener(errorMessage = message)
+                setLoading()
             }
         }
 
@@ -276,14 +290,17 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getListThisWeekTasks() {
+        setLoading()
         val listener = object : ApiCallbackListener<List<TaskModel>> {
 
             override fun onSuccess(result: List<TaskModel>?, statusCode: Int?) {
                 _listTasks.value = result
+                setLoading()
             }
 
             override fun onFailure(message: String) {
                 _listTasks.value = null
+                setLoading()
             }
         }
 
@@ -292,14 +309,17 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getListNextWeekTasks() {
+        setLoading()
         val listener = object : ApiCallbackListener<List<TaskModel>> {
 
             override fun onSuccess(result: List<TaskModel>?, statusCode: Int?) {
                 _listTasks.value = result
+                setLoading()
             }
 
             override fun onFailure(message: String) {
                 _listTasks.value = null
+                setLoading()
             }
         }
 
@@ -308,6 +328,7 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getListNotCompletedTasks() {
+        setLoading()
         mTaskRepository.getListByCompleteTasks(user.uid, false, mApiCallbackListener)
     }
 }

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mytasks.R
 import com.example.mytasks.adapter.ListTasksAdapter
+import com.example.mytasks.common.ProgressBarLoading
 import com.example.mytasks.common.constants.ScreenFilterConstants
 import com.example.mytasks.listener.TaskListener
 import com.example.mytasks.service.model.TaskModel
@@ -33,6 +34,7 @@ class NextWeekFragment : Fragment() {
 
     private lateinit var mTodayViewModel: TodayViewModel
     private lateinit var mListener: TaskListener
+    private lateinit var mLoading: ProgressBarLoading
 
     private val mAdapter = ListTasksAdapter()
 
@@ -49,6 +51,8 @@ class NextWeekFragment : Fragment() {
 
         auth = Firebase.auth
         user = auth.currentUser
+
+        mLoading = ProgressBarLoading(this)
 
         val recyclerToday = root.findViewById<RecyclerView>(R.id.recyclerToday)
         recyclerToday.layoutManager = LinearLayoutManager(context)
@@ -84,6 +88,14 @@ class NextWeekFragment : Fragment() {
     }
 
     private fun observe() {
+        mTodayViewModel.isLoading.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                mLoading.startLoading()
+            } else {
+                mLoading.endLoading()
+            }
+        })
+
         mTodayViewModel.listTasks.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 mAdapter.updateList(it)

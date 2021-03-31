@@ -1,10 +1,12 @@
 package com.example.mytasks.ui.today
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -12,8 +14,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mytasks.MainActivity
 import com.example.mytasks.R
 import com.example.mytasks.adapter.ListTasksAdapter
+import com.example.mytasks.common.ProgressBarLoading
 import com.example.mytasks.common.constants.ScreenFilterConstants
 import com.example.mytasks.listener.TaskListener
 import com.example.mytasks.service.model.TaskModel
@@ -31,7 +35,7 @@ class TodayFragment : Fragment() {
 
     private lateinit var mViewModel: TodayViewModel
     private lateinit var mListener: TaskListener
-
+    private lateinit var mLoading: ProgressBarLoading
 
     private val mAdapter = ListTasksAdapter()
 
@@ -46,9 +50,9 @@ class TodayFragment : Fragment() {
             ViewModelProvider(this).get(TodayViewModel::class.java)
 
         val root = inflater.inflate(R.layout.fragment_today, container, false)
-
         auth = Firebase.auth
         user = auth.currentUser
+        mLoading = ProgressBarLoading(this)
 
         val recyclerToday = root.findViewById<RecyclerView>(R.id.recyclerToday)
         recyclerToday.layoutManager = LinearLayoutManager(context)
@@ -84,6 +88,14 @@ class TodayFragment : Fragment() {
     }
 
     private fun observe() {
+        mViewModel.isLoading.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                mLoading.startLoading()
+            } else {
+                mLoading.endLoading()
+            }
+        })
+
         mViewModel.listTasks.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 mAdapter.updateList(it)
