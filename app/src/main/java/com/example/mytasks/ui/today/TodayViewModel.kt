@@ -81,28 +81,28 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
         mTaskRepository.deletePhoto(imageUrl, listener)
     }
 
-    private fun getStartOfDay(): Long {
+    private fun getStartOfDay(): Calendar {
         val calendar = Calendar.getInstance()
         val year = calendar[Calendar.YEAR]
         val month = calendar[Calendar.MONTH]
         val day = calendar[Calendar.DATE]
         calendar.set(year, month, day, 0, 0, 0)
-        return calendar.timeInMillis
+        return calendar
     }
 
-    private fun getEndOfDay(): Long {
+    private fun getEndOfDay(): Calendar {
         val calendar = Calendar.getInstance()
         val year = calendar[Calendar.YEAR]
         val month = calendar[Calendar.MONTH]
         val day = calendar[Calendar.DATE]
         calendar.set(year, month, day, 23, 59, 59)
-        return calendar.timeInMillis
+        return calendar
     }
 
     private fun getStartAndEndDayOfWeek(): GenericModel {
         val calendar = Calendar.getInstance()
-        val calendarStart = Calendar.getInstance()
-        val calendarEnd = Calendar.getInstance()
+        val calendarStart = getStartOfDay()
+        val calendarEnd = getEndOfDay()
 
         val day = calendar.get(Calendar.DAY_OF_WEEK)
 
@@ -159,8 +159,8 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun getStartAndEndDayOfNextWeek(): GenericModel {
         val calendar = Calendar.getInstance()
-        val calendarStart = Calendar.getInstance()
-        val calendarEnd = Calendar.getInstance()
+        val calendarStart = getStartOfDay()
+        val calendarEnd = getEndOfDay()
 
         val day = calendar.get(Calendar.DAY_OF_WEEK)
 
@@ -208,6 +208,9 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
+        var dayStart = calendarStart.time
+        var dayEnd = calendarEnd.time
+
         val obj = GenericModel().apply {
             startDate = calendarStart.timeInMillis
             endDate = calendarEnd.timeInMillis
@@ -232,7 +235,7 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
-        mTaskRepository.getListTask(user.uid, startDay, endDay, listener)
+        mTaskRepository.getListTask(user.uid, startDay.timeInMillis, endDay.timeInMillis, listener)
     }
 
     fun getListDoneTasks(id: String) {

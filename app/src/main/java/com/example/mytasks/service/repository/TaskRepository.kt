@@ -1,4 +1,4 @@
-package com.example.mytasks.service.repositorygetStartAndEndDayOfNextWeek
+package com.example.mytasks.service.repository
 
 import android.content.Context
 import android.util.Log
@@ -27,8 +27,8 @@ class TaskRepository(context: Context) {
 
         tasksRef
             .whereEqualTo("userId", uid)
-            .whereGreaterThanOrEqualTo("date", startDay)
-            .whereLessThanOrEqualTo("date", endDay)
+//            .whereGreaterThanOrEqualTo("date", startDay)
+//            .whereLessThanOrEqualTo("date", endDay)
             .orderBy("date", Query.Direction.ASCENDING)
             .get()
             .addOnSuccessListener { documents ->
