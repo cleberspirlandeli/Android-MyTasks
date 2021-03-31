@@ -15,12 +15,17 @@
 
         <item
             android:id="@+id/nav_next_week"
-            android:icon="@drawable/ic_baseline_next_plan_24"
+            android:icon="@drawable/ic_baseline_double_arrow_24"
             android:title="@string/next_week" />
 
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_baseline_check_circle_outline_24"
             android:title="@string/task_done" />
+
+        <item
+            android:id="@+id/nav_not_completed"
+            android:icon="@drawable/ic_baseline_radio_button_checked_24"
+            android:title="@string/not_completed" />
     </group>
 </menu>

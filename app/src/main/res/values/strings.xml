@@ -57,6 +57,7 @@
     <string name="task_removed_successfully">Task successfully removed</string>
     <string name="task_updated_successfully">Task successfully updated</string>
     <string name="next_week">Next Week</string>
+    <string name="not_completed">Not Completed</string>
 
 
     <!--  ITEMS PRIORITY  -->

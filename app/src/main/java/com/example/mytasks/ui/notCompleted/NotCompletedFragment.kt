@@ -1,15 +1,15 @@
-package com.example.mytasks.ui.done
+package com.example.mytasks.ui.notCompleted
 
+import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.Gravity
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mytasks.R
@@ -23,7 +23,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-class DoneFragment : Fragment() {
+class NotCompletedFragment : Fragment() {
 
     // FIREBASE
     private lateinit var auth: FirebaseAuth
@@ -35,14 +35,15 @@ class DoneFragment : Fragment() {
 
     private val mAdapter = ListTasksAdapter()
 
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
+    private lateinit var viewModel: NotCompletedViewModel
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         mTodayViewModel =
-                ViewModelProvider(this).get(TodayViewModel::class.java)
+            ViewModelProvider(this).get(TodayViewModel::class.java)
+
         val root = inflater.inflate(R.layout.fragment_today, container, false)
 
         auth = Firebase.auth
@@ -58,13 +59,16 @@ class DoneFragment : Fragment() {
             }
 
             override fun onDeleteTaskClick(task: TaskModel) {
-                mTodayViewModel.delete(task, ScreenFilterConstants.SCREEN.DONE)
+                mTodayViewModel.delete(task, ScreenFilterConstants.SCREEN.TODAY)
             }
 
             override fun onChangeCompleteTaskClick(id: String, statusTask: Boolean) {
-                mTodayViewModel.onChangeCompleteTaskClick(id, statusTask, ScreenFilterConstants.SCREEN.DONE)
+                mTodayViewModel.onChangeCompleteTaskClick(
+                    id,
+                    statusTask,
+                    ScreenFilterConstants.SCREEN.TODAY
+                )
             }
-
         }
 
         observe()
@@ -74,7 +78,7 @@ class DoneFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         mAdapter.attachListener(mListener)
-        mTodayViewModel.getListDoneTasks()
+        mTodayViewModel.getListNotCompletedTasks()
     }
 
     private fun observe() {

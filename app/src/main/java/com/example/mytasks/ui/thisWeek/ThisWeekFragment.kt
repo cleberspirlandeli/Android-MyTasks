@@ -92,7 +92,7 @@ class ThisWeekFragment : Fragment() {
 
                 val toast =
                     Toast(context)
-                toast.setGravity(Gravity.BOTTOM, 0, 30)
+                toast.setGravity(Gravity.BOTTOM, 0, 40)
                 toast.setDuration(Toast.LENGTH_SHORT)
                 toast.view = layout
                 toast.show()

@@ -33,6 +33,19 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
     // REPOSITORY
     private val mTaskRepository: TaskRepository = TaskRepository(application)
 
+    // LISTENERS
+
+    private val mApiCallbackListener = object : ApiCallbackListener<List<TaskModel>> {
+
+        override fun onSuccess(result: List<TaskModel>?, statusCode: Int?) {
+            _listTasks.value = result
+        }
+
+        override fun onFailure(message: String) {
+            _listTasks.value = null
+        }
+    }
+
     fun delete(task: TaskModel, screen: Int) {
 
         task.image.let {
@@ -63,7 +76,7 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
     private fun getListByTypeScreen(screen: Int) {
         when (screen) {
             ScreenFilterConstants.SCREEN.TODAY -> getListAllTasks()
-            ScreenFilterConstants.SCREEN.DONE -> getListDoneTasks(user.uid)
+            ScreenFilterConstants.SCREEN.DONE -> getListDoneTasks()
         }
     }
 
@@ -224,21 +237,10 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
         var startDay = getStartOfDay()
         var endDay = getEndOfDay()
 
-        val listener = object : ApiCallbackListener<List<TaskModel>> {
-
-            override fun onSuccess(result: List<TaskModel>?, statusCode: Int?) {
-                _listTasks.value = result
-            }
-
-            override fun onFailure(message: String) {
-                _listTasks.value = null
-            }
-        }
-
-        mTaskRepository.getListTask(user.uid, startDay.timeInMillis, endDay.timeInMillis, listener)
+        mTaskRepository.getListTask(user.uid, startDay.timeInMillis, endDay.timeInMillis, mApiCallbackListener)
     }
 
-    fun getListDoneTasks(id: String) {
+    fun getListDoneTasks() {
 
         val listener = object : ApiCallbackListener<List<TaskModel>> {
 
@@ -251,7 +253,7 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
-        mTaskRepository.getListDoneTasks(id, listener)
+        mTaskRepository.getListByCompleteTasks(user.uid, true, listener)
     }
 
     fun getTaskById(id: String) {}
@@ -303,6 +305,10 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
 
         val filters = getStartAndEndDayOfNextWeek()
         mTaskRepository.getListWeekByFilterTasks(user.uid, filters, listener)
+    }
+
+    fun getListNotCompletedTasks() {
+        mTaskRepository.getListByCompleteTasks(user.uid, false, mApiCallbackListener)
     }
 }
 

@@ -325,7 +325,7 @@ class TaskFormActivity : AppCompatActivity(),
 
                 val toast =
                     Toast.makeText(this, R.string.task_successfully_created, Toast.LENGTH_SHORT)
-                toast.setGravity(Gravity.BOTTOM, 0, 20)
+                toast.setGravity(Gravity.BOTTOM, 0, 40)
                 toast.view = layoutInflater.inflate(R.layout.toast_layout, null)
 
                 finish()

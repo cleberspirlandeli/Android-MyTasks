@@ -28,4 +28,10 @@
         android:name="com.example.mytasks.ui.done.DoneFragment"
         android:label="@string/menu_done"
         tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/nav_not_completed"
+        android:name="com.example.mytasks.ui.notCompleted.NotCompletedFragment"
+        android:label="@string/not_completed"
+        tools:layout="@layout/fragment_today" />
 </navigation>

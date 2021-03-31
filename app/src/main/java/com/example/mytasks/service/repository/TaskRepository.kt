@@ -88,12 +88,12 @@ class TaskRepository(context: Context) {
             }
     }
 
-    fun getListDoneTasks(id: String, cb: ApiCallbackListener<List<TaskModel>>) {
+    fun getListByCompleteTasks(id: String, status: Boolean, cb: ApiCallbackListener<List<TaskModel>>) {
         var taskList: MutableList<TaskModel> = ArrayList()
 
         tasksRef
             .whereEqualTo("userId", id)
-            .whereEqualTo("complete", true)
+            .whereEqualTo("complete", status)
             .orderBy("date", Query.Direction.ASCENDING)
             .get()
             .addOnSuccessListener { documents ->

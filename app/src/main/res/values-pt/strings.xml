@@ -43,6 +43,7 @@
     <string name="task_this_week">Essa semana</string>
     <string name="next_week">Próxima Semana</string>
     <string name="task_done">Concluidos</string>
+    <string name="not_completed">Não Concluidos</string>
 
     <!--  TASK FORM  -->
     <string name="task_successfully_created">Tarefa criada com sucesso</string>
