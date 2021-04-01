@@ -3,6 +3,9 @@ package com.example.mytasks
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -13,12 +16,17 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.bumptech.glide.Glide
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +50,24 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_next_week, R.id.nav_not_completed), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+
+        val navigationView : NavigationView  = findViewById(R.id.nav_view)
+        val headerView : View = navigationView.getHeaderView(0)
+        val navUserPhoto : ImageView = headerView.findViewById(R.id.imgUserPhoto)
+        val navUsername : TextView = headerView.findViewById(R.id.txtUserName)
+        val navUserEmail : TextView = headerView.findViewById(R.id.txtEmail)
+
+        auth = Firebase.auth
+        val user = auth.currentUser
+
+        navUsername.text = user.displayName
+        navUserEmail.text = user.email
+
+
+        if (user.photoUrl != null) {
+            Glide.with(headerView).load(user.photoUrl).into(navUserPhoto)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

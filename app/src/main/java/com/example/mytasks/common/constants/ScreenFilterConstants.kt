@@ -10,4 +10,11 @@ class ScreenFilterConstants private constructor() {
         const val ALL_DONE = 4
         const val ALL_UNDO = 4
     }
+
+    object TYPE_SCREEN {
+        const val VIEW = "VIEW"
+        const val UPDATE = "UPDATE"
+        const val INSERT = "INSERT"
+        const val LIST = "LIST"
+    }
 }

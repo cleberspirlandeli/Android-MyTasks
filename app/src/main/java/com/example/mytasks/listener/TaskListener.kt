@@ -8,7 +8,7 @@ interface TaskListener {
      * View / Update
      * Click para Visualizaçao / Ediçao
      */
-    fun onViewTaskClick(id: String)
+    fun onViewTaskClick(task: TaskModel)
 
     /**
      * Delete

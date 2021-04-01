@@ -7,9 +7,7 @@ import com.example.mytasks.service.model.GenericModel
 import com.example.mytasks.service.model.TaskModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
 
 class TaskRepository(context: Context) {
 
@@ -133,5 +131,12 @@ class TaskRepository(context: Context) {
                 Log.w("Firestore Failure", "Error getting documents: ", exception)
                 cb.onFailure("Error getting documents: ${exception.toString()}")
             }
+    }
+
+    fun getTaskById(
+        task: TaskModel,
+        mApiCallbackListener: ApiCallbackListener<TaskModel>
+    ) {
+
     }
 }

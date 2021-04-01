@@ -1,10 +1,13 @@
 package com.example.mytasks.ui.today
 
 import android.app.Application
+import android.content.Intent
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.mytasks.R
+import com.example.mytasks.TaskFormActivity
 import com.example.mytasks.common.constants.ScreenFilterConstants
 import com.example.mytasks.listener.ApiCallbackListener
 import com.example.mytasks.listener.ValidationListener
@@ -32,6 +35,9 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _listTasks = MutableLiveData<List<TaskModel>?>()
     val listTasks: LiveData<List<TaskModel>?> = _listTasks
+
+    private val _task = MutableLiveData<TaskModel>()
+    val task: LiveData<TaskModel> = _task
 
     // REPOSITORY
     private val mTaskRepository: TaskRepository = TaskRepository(application)
@@ -85,7 +91,7 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun deletePhoto(imageUrl: String) {
+    fun deletePhoto(imageUrl: String) {
         val listener = object : ApiCallbackListener<String> {
 
             override fun onSuccess(result: String?, statusCode: Int?) {
@@ -268,7 +274,25 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
         mTaskRepository.getListByCompleteTasks(user.uid, true, listener)
     }
 
-    fun getTaskById(id: String) {}
+    fun getTaskById(task: TaskModel) {
+        setLoading()
+
+        val apiListener = object : ApiCallbackListener<TaskModel> {
+
+          override fun onFailure(message: String) {
+                _listTasks.value = null
+                setLoading()
+            }
+
+            override fun onSuccess(result: TaskModel?, statusCode: Int?) {
+               _task.value = result!!
+                setLoading()
+            }
+
+        }
+
+        mTaskRepository.getTaskById(task, apiListener)
+    }
 
     fun onChangeCompleteTaskClick(id: String, statusTask: Boolean, screen: Int) {
         setLoading()

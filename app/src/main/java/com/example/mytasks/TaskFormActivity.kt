@@ -18,8 +18,13 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModelProvider
 import com.example.mytasks.common.ConnectivityManager
+import com.example.mytasks.common.ProgressBarLoading
+import com.example.mytasks.common.constants.ScreenFilterConstants
+import com.example.mytasks.common.constants.TaskConstants
 import com.example.mytasks.service.model.TaskModel
+import com.example.mytasks.ui.today.TodayViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -29,10 +34,12 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.protobuf.Empty
 import kotlinx.android.synthetic.main.activity_task_form.*
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.AbstractCollection
 
 
 class TaskFormActivity : AppCompatActivity(),
@@ -47,12 +54,6 @@ class TaskFormActivity : AppCompatActivity(),
     private var _hour = 0
     private var _minute = 0
 
-//    private var savedDay = 0
-//    private var savedMonth = 0
-//    private var savedYear = 0
-//    private var savedHour = 0
-//    private var savedMinute = 0
-
     lateinit var db: FirebaseFirestore
     private var items = arrayOf<String>()
 
@@ -61,18 +62,25 @@ class TaskFormActivity : AppCompatActivity(),
     private lateinit var storage: FirebaseStorage
     private lateinit var storageRef: StorageReference
     private lateinit var taskRef: StorageReference
-    private lateinit var taskImageRef: StorageReference
+    private lateinit var taskSaved: TaskModel
 
     private lateinit var dialog: Dialog
     private var imageBitmap: Bitmap? = null
     private lateinit var view: View
     private lateinit var progressButton: ProgressButton
 
+    private lateinit var mTodayViewModel: TodayViewModel
+    private lateinit var mLoading: ProgressBarLoading
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_form)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        mTodayViewModel =
+            ViewModelProvider(this).get(TodayViewModel::class.java)
 
         view = btnSave
 
@@ -90,12 +98,54 @@ class TaskFormActivity : AppCompatActivity(),
         user = auth.currentUser
 
 
+        taskSaved = TaskModel()
 
         btn_delete.visibility = View.INVISIBLE
 
         listeners()
         setActualDateAndHours()
         configDialog()
+
+        val bundle = intent.extras
+        if (bundle != null) {
+            setFormByTask()
+        }
+
+    }
+
+    private fun setFormByTask() {
+        var task: TaskModel = intent.extras?.get("extra_task") as TaskModel
+        var task_id: String = intent.extras?.get("extra_task_id") as String
+        taskSaved = task
+        taskSaved.id = task_id
+
+        val taskDate = SimpleDateFormat("dd/MM/yyyy").format(task.date)
+        val taskTime = SimpleDateFormat("HH:mm").format(task.date)
+
+        items = resources.getStringArray(R.array.priorities_array)
+        val adapter = ArrayAdapter(baseContext, R.layout.option_item_priority, items)
+
+        // Set make default value
+        autoCompletePriority.setText(adapter.getItem(task.priority!!).toString(), false)
+        autoCompletePriority.setAdapter(adapter);
+
+        txtTask.setText(task.task)
+        swtComplete.isChecked = task.complete!!
+        txtDescription.setText(task.description)
+
+
+        var data = Calendar.getInstance()
+        data.timeInMillis = task.date!!
+        var dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm");
+        var hoje = dateFormat.format(data.time);
+        btnDate.text = hoje
+
+        _year = data.get(Calendar.YEAR)
+        _month = data.get(Calendar.MONTH)
+        _dayOfMonth = data.get(Calendar.DAY_OF_MONTH)
+        _hour = data.get(Calendar.HOUR_OF_DAY)
+        _minute = data.get(Calendar.MINUTE)
+
     }
 
     override fun onResume() {
@@ -232,8 +282,12 @@ class TaskFormActivity : AppCompatActivity(),
             return progressButton.buttonFinish()
         }
 
-        if (imageBitmap == null || imageBitmap!!.isRecycled)
+        if (imageBitmap == null || imageBitmap!!.isRecycled) {
+            if (taskSaved.id != null) {
+                return updateTaskInFirebase()
+            }
             return saveTaskInFirebase()
+        }
 
         getDateTimeCalendar()
         val randomString = java.util.UUID.randomUUID().toString()
@@ -257,12 +311,72 @@ class TaskFormActivity : AppCompatActivity(),
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val downloadUri = task.result.toString()
-                saveTaskInFirebase(downloadUri, namePhoto)
+
+                if (taskSaved.id != null) {
+                    updateTaskInFirebase(downloadUri, namePhoto)
+                } else {
+                    saveTaskInFirebase(downloadUri, namePhoto)
+                }
             } else {
                 // Handle failures
                 // ...
             }
         }
+
+    }
+
+    private fun updateTaskInFirebase(uriImage: String = "", namePhoto: String = "") {
+
+        if (!uriImage.isNullOrEmpty()) {
+            taskSaved.image?.let { mTodayViewModel.deletePhoto(it) }
+        }
+
+        val calendar = Calendar.getInstance()
+        calendar[Calendar.YEAR] = _year
+        calendar[Calendar.MONTH] = _month
+        calendar[Calendar.DAY_OF_MONTH] = _dayOfMonth
+        calendar[Calendar.HOUR_OF_DAY] = _hour
+        calendar[Calendar.MINUTE] = _minute
+        calendar[Calendar.SECOND] = 0
+        var date = calendar.time
+        val timestamp: Long = calendar.timeInMillis
+
+
+        var priorityIndex = items.indexOf(autoCompletePriority.text.toString())
+
+        val task = TaskModel(
+            user.uid,
+            txtTask.text.toString(),
+            priorityIndex,
+            swtComplete.isChecked,
+            timestamp,
+            txtDescription.text.toString(),
+            uriImage,
+            namePhoto
+        )
+
+        db.collection("tasks")
+            .document(taskSaved.id!!)
+            .set(task)
+            .addOnSuccessListener { documentReference ->
+                Log.d(
+                    "addOnSuccessListener",
+                    "DocumentSnapshot added with ID: ${documentReference}"
+                )
+
+                val toast =
+                    Toast.makeText(this, R.string.task_successfully_created, Toast.LENGTH_SHORT)
+                toast.setGravity(Gravity.BOTTOM, 0, 40)
+                toast.view = layoutInflater.inflate(R.layout.toast_layout, null)
+
+                finish()
+                progressButton.buttonFinish()
+
+                toast.show()
+            }
+            .addOnFailureListener { e ->
+                Log.w("addOnFailureListener", "Error adding document", e)
+            }
 
     }
 

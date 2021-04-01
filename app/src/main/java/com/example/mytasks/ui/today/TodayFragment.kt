@@ -1,6 +1,7 @@
 package com.example.mytasks.ui.today
 
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mytasks.MainActivity
 import com.example.mytasks.R
+import com.example.mytasks.TaskFormActivity
 import com.example.mytasks.adapter.ListTasksAdapter
 import com.example.mytasks.common.ProgressBarLoading
 import com.example.mytasks.common.constants.ScreenFilterConstants
@@ -59,8 +61,11 @@ class TodayFragment : Fragment() {
         recyclerToday.adapter = mAdapter
 
         mListener = object : TaskListener {
-            override fun onViewTaskClick(id: String) {
-                mViewModel.getTaskById(id)
+            override fun onViewTaskClick(task: TaskModel) {
+                val intent = Intent(context, TaskFormActivity::class.java)
+                intent.putExtra("extra_task", task)
+                intent.putExtra("extra_task_id", task.id)
+                startActivity(intent)
             }
 
             override fun onDeleteTaskClick(task: TaskModel) {

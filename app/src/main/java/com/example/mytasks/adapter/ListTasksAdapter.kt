@@ -175,7 +175,7 @@ class TaskViewHolder(itemView: View, val listener: TaskListener) :
 
         // Events
         mCardViewTask.setOnClickListener {
-            Toast.makeText(itemView.context, "Agora abro outra tela", Toast.LENGTH_SHORT).show()
+            task.let { listener.onViewTaskClick(it) }
         }
 
         mBtnDelete.setOnClickListener { view ->

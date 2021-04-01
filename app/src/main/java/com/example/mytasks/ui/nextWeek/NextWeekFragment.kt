@@ -59,8 +59,8 @@ class NextWeekFragment : Fragment() {
         recyclerToday.adapter = mAdapter
 
         mListener = object : TaskListener {
-            override fun onViewTaskClick(id: String) {
-                mTodayViewModel.getTaskById(id)
+            override fun onViewTaskClick(task: TaskModel) {
+
             }
 
             override fun onDeleteTaskClick(task: TaskModel) {
