@@ -69,7 +69,7 @@ class TaskViewHolder(itemView: View, val listener: TaskListener) :
     private lateinit var time: String
 
     private var mCardViewTask: CardView = itemView.findViewById(R.id.card_view_task)
-    private var mCardViewNoData: ConstraintLayout = itemView.findViewById(R.id.constraintLayoutNoData)
+//    private var mCardViewNoData: ConstraintLayout = itemView.findViewById(R.id.constraintLayoutNoData)
 
     private var mImagePriority: ImageView = itemView.findViewById(R.id.img_priority_task)
     private var mImagePhoto: ImageView = itemView.findViewById(R.id.img_photo_task)
@@ -217,13 +217,13 @@ class TaskViewHolder(itemView: View, val listener: TaskListener) :
     }
 
     private fun containsItemInList() {
-        mCardViewNoData.visibility = View.GONE
+//        mCardViewNoData.visibility = View.GONE
         mCardViewTask.visibility = View.VISIBLE
         mCardViewAdViewMediumRectangle.visibility = View.VISIBLE
     }
 
     private fun noDataList() {
-        mCardViewNoData.visibility = View.VISIBLE
+//        mCardViewNoData.visibility = View.VISIBLE
         mCardViewTask.visibility = View.GONE
         mCardViewAdViewMediumRectangle.visibility = View.GONE
     }

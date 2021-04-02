@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_activity_task_form"
@@ -11,183 +11,203 @@
     android:orientation="vertical"
     android:padding="8dp">
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".TaskFormActivity">
+        android:layout_marginBottom="50dp">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cvPicture"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_margin="3dp"
-            android:clickable="true"
-            android:elevation="6dp"
-            app:cardCornerRadius="7dp"
-            app:cardElevation="6dp"
+            android:layout_height="wrap_content"
+            tools:context=".TaskFormActivity"
             tools:ignore="MissingConstraints">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/test"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvPicture"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="200dp"
+                android:layout_margin="3dp"
+                android:clickable="true"
+                android:elevation="6dp"
+                app:cardCornerRadius="7dp"
+                app:cardElevation="6dp"
+                tools:ignore="MissingConstraints">
 
-                <ImageView
-                    android:id="@+id/imageTask"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_baseline_add_photo_alternate_24"
-                    app:layout_constraintBottom_toBottomOf="@+id/test"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/test" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/test"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/btn_delete"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:drawableEnd="@drawable/ic_baseline_delete_outline_24"
-                    android:padding="8dp"
-                    android:visibility="invisible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <ImageView
+                        android:id="@+id/imageTask"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_baseline_add_photo_alternate_24"
+                        app:layout_constraintBottom_toBottomOf="@+id/test"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/test" />
+
+                    <Button
+                        android:id="@+id/btn_delete"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:drawableEnd="@drawable/ic_baseline_delete_outline_24"
+                        android:padding="8dp"
+                        android:visibility="invisible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        </androidx.cardview.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilTask"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="@string/hint_task"
-            app:counterEnabled="true"
-            app:counterMaxLength="30"
-            app:layout_constraintTop_toBottomOf="@+id/cvPicture"
-            tools:ignore="MissingConstraints">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtTask"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="textCapSentences"
-                android:maxLength="30"
-                android:nextFocusDown="@+id/txtPriority"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilPriority"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/hint_priority"
-            app:layout_constraintTop_toBottomOf="@+id/tilTask"
-            tools:ignore="MissingConstraints">
-
-            <AutoCompleteTextView
-                android:id="@+id/autoCompletePriority"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:enabled="true"
-                android:imeOptions="actionDone"
-                android:inputType="none"
-                android:nextFocusDown="@id/btnDate"
-                android:textSize="14sp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <Button
-            android:id="@+id/btnDate"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:nextFocusDown="@id/swtComplete"
-            android:paddingLeft="32dp"
-            android:paddingTop="8dp"
-            android:paddingRight="32dp"
-            android:paddingBottom="12dp"
-            android:text="Date"
-            android:textSize="16dp"
-            app:icon="@drawable/ic_baseline_calendar_today_24"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tilPriority" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/swtComplete"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:checked="false"
-            android:nextFocusDown="@id/tilDescription"
-            android:paddingLeft="40dp"
-            android:text="@string/complete"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imgTask"
-            app:layout_constraintTop_toBottomOf="@+id/btnDate"
-            tools:ignore="MissingConstraints" />
-
-        <ImageView
-            android:id="@+id/imgTask"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_baseline_highlight_off_24"
-            app:layout_constraintBottom_toBottomOf="@+id/swtComplete"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/swtComplete" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilDescription"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/hint_description"
-            android:nextFocusDown="@id/btnSave"
-            app:counterEnabled="true"
-            app:counterMaxLength="100"
-            app:layout_constraintTop_toBottomOf="@+id/swtComplete"
-            tools:ignore="MissingConstraints">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtDescription"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilTask"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:imeOptions="actionDone"
-                android:inputType="textMultiLine|textCapSentences"
-                android:maxLength="100"
-                android:maxLines="3"
-                android:layout_marginBottom="50dp"
-                android:singleLine="false" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/hint_task"
+                app:counterEnabled="true"
+                app:counterMaxLength="30"
+                app:layout_constraintTop_toBottomOf="@+id/cvPicture"
+                tools:ignore="MissingConstraints">
 
-        <include
-            android:id="@+id/btnSave"
-            layout="@layout/progress_btn_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtTask"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="textCapSentences"
+                    android:maxLength="30"
+                    android:nextFocusDown="@+id/txtPriority"
+                    android:singleLine="true" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilPriority"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="@string/hint_priority"
+                app:layout_constraintTop_toBottomOf="@+id/tilTask"
+                tools:ignore="MissingConstraints">
 
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompletePriority"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="true"
+                    android:imeOptions="actionDone"
+                    android:inputType="none"
+                    android:nextFocusDown="@id/btnDate"
+                    android:textSize="14sp" />
 
-</ScrollView>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnDate"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:nextFocusDown="@id/swtComplete"
+                android:paddingLeft="32dp"
+                android:paddingTop="8dp"
+                android:paddingRight="32dp"
+                android:paddingBottom="12dp"
+                android:text="Date"
+                android:textSize="16dp"
+                app:icon="@drawable/ic_baseline_calendar_today_24"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tilPriority" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/swtComplete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:checked="false"
+                android:nextFocusDown="@id/tilDescription"
+                android:paddingLeft="40dp"
+                android:text="@string/complete"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imgTask"
+                app:layout_constraintTop_toBottomOf="@+id/btnDate"
+                tools:ignore="MissingConstraints" />
+
+            <ImageView
+                android:id="@+id/imgTask"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_baseline_highlight_off_24"
+                app:layout_constraintBottom_toBottomOf="@+id/swtComplete"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/swtComplete" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDescription"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="@string/hint_description"
+                android:nextFocusDown="@id/btnSave"
+                android:paddingBottom="0dp"
+                app:counterEnabled="true"
+                app:counterMaxLength="100"
+                app:layout_constraintTop_toBottomOf="@+id/swtComplete"
+                tools:ignore="MissingConstraints">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:imeOptions="actionDone"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:maxLength="100"
+                    android:maxLines="3"
+                    android:singleLine="false" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adViewBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="1dp"
+        android:visibility="gone"
+        app:adSize="SMART_BANNER"
+        app:adUnitId="@string/admob_banner_geral"
+        app:layout_constraintBottom_toTopOf="@id/btnSave"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <include
+        android:id="@+id/btnSave"
+        layout="@layout/progress_btn_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 

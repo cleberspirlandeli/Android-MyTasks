@@ -3,6 +3,7 @@ package com.example.mytasks
 import android.Manifest
 import android.app.*
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -20,11 +21,20 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.mytasks.common.ConnectivityManager
-import com.example.mytasks.common.ProgressBarLoading
+import com.example.mytasks.common.ProgressBarLoadingActivity
+import com.example.mytasks.common.ProgressBarLoadingFragment
+import com.example.mytasks.common.constants.CountAdMob
 import com.example.mytasks.common.constants.ScreenFilterConstants
 import com.example.mytasks.common.constants.TaskConstants
 import com.example.mytasks.service.model.TaskModel
+import com.example.mytasks.service.repository.AdMobPreferences
 import com.example.mytasks.ui.today.TodayViewModel
+import com.google.android.gms.ads.*
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.gms.ads.rewarded.RewardItem
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -57,6 +67,10 @@ class TaskFormActivity : AppCompatActivity(),
     lateinit var db: FirebaseFirestore
     private var items = arrayOf<String>()
 
+    private var mRewardedAd: RewardedAd? = null
+
+    private final var TAG = "TaskFormActivityADMOB"
+
     private lateinit var auth: FirebaseAuth
     private lateinit var user: FirebaseUser
     private lateinit var storage: FirebaseStorage
@@ -70,8 +84,9 @@ class TaskFormActivity : AppCompatActivity(),
     private lateinit var progressButton: ProgressButton
 
     private lateinit var mTodayViewModel: TodayViewModel
-    private lateinit var mLoading: ProgressBarLoading
+    private lateinit var mAdMobPreferences : AdMobPreferences
 
+    private lateinit var mLoading: ProgressBarLoadingActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +96,9 @@ class TaskFormActivity : AppCompatActivity(),
 
         mTodayViewModel =
             ViewModelProvider(this).get(TodayViewModel::class.java)
+
+        mLoading = ProgressBarLoadingActivity(this)
+        mLoading.startLoading()
 
         view = btnSave
 
@@ -98,17 +116,53 @@ class TaskFormActivity : AppCompatActivity(),
         user = auth.currentUser
 
 
+
+        mAdMobPreferences = AdMobPreferences(baseContext)
+        var adRequest = AdRequest.Builder().build()
+
+        RewardedAd.load(this, "ca-app-pub-3940256099942544/5224354917", adRequest, object : RewardedAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                Log.d(TAG, adError.message)
+                mRewardedAd = null
+                mLoading.endLoading()
+            }
+
+            override fun onAdLoaded(rewardedAd: RewardedAd) {
+                Log.d(TAG, "Ad was loaded.")
+                mRewardedAd = rewardedAd
+                mLoading.endLoading()
+            }
+        })
+
         taskSaved = TaskModel()
 
         btn_delete.visibility = View.INVISIBLE
 
         listeners()
         setActualDateAndHours()
-        configDialog()
 
         val bundle = intent.extras
         if (bundle != null) {
             setFormByTask()
+        }
+
+        configDialog()
+
+        showBannerAdMob()
+
+    }
+
+    private fun showBannerAdMob() {
+        adViewBanner.visibility = View.GONE
+
+        val adRequest = AdRequest.Builder().build()
+        adViewBanner.loadAd(adRequest)
+
+        val rnds = (1..10).random()
+
+        if (rnds > 7) {
+            tilDescription.setPadding(0,0,0,170)
+            adViewBanner.visibility = View.VISIBLE
         }
 
     }
@@ -204,7 +258,7 @@ class TaskFormActivity : AppCompatActivity(),
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.btnDate -> openDatePicker()
-            R.id.btnSave -> saveTask()
+            R.id.btnSave -> save()
             R.id.cvPicture -> openDialogFromImage()
             R.id.btn_dialog_cancel -> dialog.dismiss()
             R.id.constraint_layout_dialog_gallery -> openGallery()
@@ -272,15 +326,57 @@ class TaskFormActivity : AppCompatActivity(),
         dialog.show()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun saveTask() {
-
+    private fun save() {
         progressButton = ProgressButton(baseContext, btnSave)
         progressButton.buttonActivated()
 
-        if (invalidationForm()) {
+        if (invalidationForm())
             return progressButton.buttonFinish()
+
+        showVideoAdMob()
+        return progressButton.buttonFinish()
+//        saveTask()
+    }
+
+    private fun showVideoAdMob() {
+        mRewardedAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+            override fun onAdDismissedFullScreenContent() {
+                Log.d(TAG, "Ad was dismissed.")
+            }
+
+            override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                Log.d(TAG, "Ad failed to show.")
+            }
+
+            override fun onAdShowedFullScreenContent() {
+                Log.d(TAG, "Ad showed fullscreen content.")
+                // Called when ad is dismissed.
+                // Don't set the ad reference to null to avoid showing the ad a second time.
+                mRewardedAd = null
+            }
         }
+
+        val countAdMob = mAdMobPreferences.getInt(CountAdMob.TYPE.INSERTED)
+        if (countAdMob > 0) {
+            if (mRewardedAd != null){
+                mRewardedAd?.show(this, OnUserEarnedRewardListener() {
+                    fun onUserEarnedReward(rewardItem: RewardItem) {
+//                        var rewardAmount = rewardItem.amount
+//                        var rewardType = rewardItem.getType()
+//                        Log.d("TAG", "User earned the reward.")
+                    }
+                })
+                mAdMobPreferences.putInt(CountAdMob.TYPE.INSERTED, 1)
+            } else {
+                Log.d("TAG", "The rewarded ad wasn't ready yet.")
+            }
+        } else {
+            mAdMobPreferences.putInt(CountAdMob.TYPE.INSERTED, countAdMob+1)
+        }
+        return
+    }
+
+    private fun saveTask() {
 
         if (imageBitmap == null || imageBitmap!!.isRecycled) {
             if (taskSaved.id != null) {

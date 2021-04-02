@@ -4,6 +4,13 @@
     <string name="facebook_app_id">481217056244918</string>
     <string name="fb_login_protocol_scheme">fb481217056244918</string>
 
+    <!--  ADMOB  -->
+    <string name="admob_id_app">ca-app-pub-2435307357987224~3218466148</string>
+    <string name="admob_banner_geral">ca-app-pub-2435307357987224/7605423393</string>
+    <string name="admob_intersticial_geral">ca-app-pub-2435307357987224/7343545427</string>
+    <string name="admob_test">ca-app-pub-3940256099942544/6300978111</string>
+
+
 
     <string name="app_name">MY TASKS</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>

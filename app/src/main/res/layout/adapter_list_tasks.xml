@@ -8,9 +8,6 @@
     android:orientation="vertical"
     android:padding="8dp">
 
-    <!-- ADMOB -->
-    <!--  google.com, pub-2435307357987224, DIRECT, f08c47fec0942fa0  -->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,50 +15,48 @@
         tools:ignore="MissingConstraints">
 
 
+<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--            android:id="@+id/constraintLayoutNoData"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:padding="16dp">-->
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayoutNoData"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="16dp"
-                >
+<!--            <ImageView-->
+<!--                android:id="@+id/imageView2"-->
+<!--                android:layout_width="50dp"-->
+<!--                android:layout_height="52dp"-->
+<!--                android:src="@drawable/sad_icon"-->
+<!--                app:layout_constraintBottom_toTopOf="@+id/textView5"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent" />-->
 
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="50dp"
-                    android:layout_height="52dp"
-                    android:src="@drawable/sad_icon"
-                    app:layout_constraintBottom_toTopOf="@+id/textView5"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+<!--            <TextView-->
+<!--                android:id="@+id/textView4"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="you have no tasks"-->
+<!--                android:textAlignment="center"-->
+<!--                android:textAllCaps="true"-->
+<!--                android:textSize="16dp"-->
+<!--                android:textStyle="bold"-->
+<!--                app:layout_constraintBottom_toTopOf="@+id/imageView2"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                tools:layout_editor_absoluteX="16dp" />-->
 
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="you have no tasks"
-                    android:textAlignment="center"
-                    android:textAllCaps="true"
-                    android:textSize="16dp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/imageView2"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:layout_editor_absoluteX="16dp" />
+<!--            <TextView-->
+<!--                android:id="@+id/textView5"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="48dp"-->
+<!--                android:text="add and complete a new task"-->
+<!--                android:textAllCaps="true"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent" />-->
 
-                <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="48dp"
-                    android:text="add and complete a new task"
-                    android:textAllCaps="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 
         <com.google.android.material.card.MaterialCardView
@@ -192,7 +187,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="10dp"
                     ads:adSize="SMART_BANNER"
-                    ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
+                    ads:adUnitId="@string/admob_banner_geral"
                     ads:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -220,7 +215,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     app:adSize="MEDIUM_RECTANGLE"
-                    app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+                    app:adUnitId="@string/admob_banner_geral"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
