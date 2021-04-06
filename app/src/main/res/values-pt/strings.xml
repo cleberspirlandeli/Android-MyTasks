@@ -64,6 +64,8 @@
     <string name="confirme_done_task">Você completou esta tarefa?</string>
     <string name="task_removed_successfully">Tarefa removida com sucesso</string>
     <string name="task_updated_successfully">Tarefa atualizada com sucesso</string>
+    <string name="message_notification">Sua tarefa começa em uma hora</string>
+
 
     <!--  ITEMS PRIORITY  -->
     <string-array name="priorities_array">

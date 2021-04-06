@@ -2,6 +2,7 @@ package com.example.mytasks
 
 import android.Manifest
 import android.app.*
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -23,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mytasks.common.ConnectivityManager
 import com.example.mytasks.common.ProgressBarLoadingActivity
 import com.example.mytasks.common.ProgressBarLoadingFragment
+import com.example.mytasks.common.Receiver
 import com.example.mytasks.common.constants.CountAdMob
 import com.example.mytasks.common.constants.ScreenFilterConstants
 import com.example.mytasks.common.constants.TaskConstants
@@ -84,9 +86,11 @@ class TaskFormActivity : AppCompatActivity(),
     private lateinit var progressButton: ProgressButton
 
     private lateinit var mTodayViewModel: TodayViewModel
-    private lateinit var mAdMobPreferences : AdMobPreferences
+    private lateinit var mAdMobPreferences: AdMobPreferences
 
     private lateinit var mLoading: ProgressBarLoadingActivity
+    private lateinit var alarmManager: AlarmManager
+    private var notificationId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,9 +102,10 @@ class TaskFormActivity : AppCompatActivity(),
             ViewModelProvider(this).get(TodayViewModel::class.java)
 
         mLoading = ProgressBarLoadingActivity(this)
-        mLoading.startLoading()
 
         view = btnSave
+
+        alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         items = resources.getStringArray(R.array.priorities_array)
         val adapter = ArrayAdapter(baseContext, R.layout.option_item_priority, items)
@@ -118,21 +123,6 @@ class TaskFormActivity : AppCompatActivity(),
 
 
         mAdMobPreferences = AdMobPreferences(baseContext)
-        var adRequest = AdRequest.Builder().build()
-
-        RewardedAd.load(this, "ca-app-pub-3940256099942544/5224354917", adRequest, object : RewardedAdLoadCallback() {
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.d(TAG, adError.message)
-                mRewardedAd = null
-                mLoading.endLoading()
-            }
-
-            override fun onAdLoaded(rewardedAd: RewardedAd) {
-                Log.d(TAG, "Ad was loaded.")
-                mRewardedAd = rewardedAd
-                mLoading.endLoading()
-            }
-        })
 
         taskSaved = TaskModel()
 
@@ -161,7 +151,7 @@ class TaskFormActivity : AppCompatActivity(),
         val rnds = (1..10).random()
 
         if (rnds > 7) {
-            tilDescription.setPadding(0,0,0,170)
+            tilDescription.setPadding(0, 0, 0, 170)
             adViewBanner.visibility = View.VISIBLE
         }
 
@@ -172,6 +162,7 @@ class TaskFormActivity : AppCompatActivity(),
         var task_id: String = intent.extras?.get("extra_task_id") as String
         taskSaved = task
         taskSaved.id = task_id
+        notificationId = task.notificationId!!
 
         val taskDate = SimpleDateFormat("dd/MM/yyyy").format(task.date)
         val taskTime = SimpleDateFormat("HH:mm").format(task.date)
@@ -330,22 +321,81 @@ class TaskFormActivity : AppCompatActivity(),
         progressButton = ProgressButton(baseContext, btnSave)
         progressButton.buttonActivated()
 
+        var adRequest = AdRequest.Builder().build()
+
         if (invalidationForm())
             return progressButton.buttonFinish()
 
-        showVideoAdMob()
-        return progressButton.buttonFinish()
-//        saveTask()
+        RewardedAd.load(
+            this,
+            "ca-app-pub-3940256099942544/5224354917",
+            adRequest,
+            object : RewardedAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    mRewardedAd = null
+                    progressButton.buttonFinish()
+                }
+
+                override fun onAdLoaded(rewardedAd: RewardedAd) {
+                    mRewardedAd = rewardedAd
+                    saveImage()
+                }
+            })
+
+
+    }
+
+    private fun createNotification(task: TaskModel) {
+        val intent = Intent(baseContext, Receiver::class.java)
+        intent.putExtra("task", task.task)
+        intent.putExtra("notificationId", task.notificationId)
+        val pendingIntent = PendingIntent.getBroadcast(
+            baseContext,
+            task.notificationId!!,
+            intent,
+            PendingIntent.FLAG_ONE_SHOT
+        )
+
+        val oneHourBefore = 1 * 60 * 60 * 1000
+        val time = task.date!! - oneHourBefore
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, pendingIntent)
     }
 
     private fun showVideoAdMob() {
-        mRewardedAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+
+        mRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdDismissedFullScreenContent() {
                 Log.d(TAG, "Ad was dismissed.")
+
+                val toast: Toast
+
+                if (taskSaved.id != null) {
+                    toast = Toast.makeText(
+                        baseContext,
+                        R.string.task_updated_successfully,
+                        Toast.LENGTH_SHORT
+                    )
+                } else {
+                    toast = Toast.makeText(
+                        baseContext,
+                        R.string.task_successfully_created,
+                        Toast.LENGTH_SHORT
+                    )
+                }
+
+                toast.setGravity(Gravity.BOTTOM, 0, 40)
+                toast.view = layoutInflater.inflate(R.layout.toast_layout, null)
+
+                finish()
+                progressButton.buttonFinish()
+
+                toast.show()
             }
 
             override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
-                Log.d(TAG, "Ad failed to show.")
+                finish()
+                progressButton.buttonFinish()
             }
 
             override fun onAdShowedFullScreenContent() {
@@ -353,12 +403,14 @@ class TaskFormActivity : AppCompatActivity(),
                 // Called when ad is dismissed.
                 // Don't set the ad reference to null to avoid showing the ad a second time.
                 mRewardedAd = null
+                finish()
+                progressButton.buttonFinish()
             }
         }
 
         val countAdMob = mAdMobPreferences.getInt(CountAdMob.TYPE.INSERTED)
-        if (countAdMob > 0) {
-            if (mRewardedAd != null){
+        if (countAdMob > 7) {
+            if (mRewardedAd != null) {
                 mRewardedAd?.show(this, OnUserEarnedRewardListener() {
                     fun onUserEarnedReward(rewardItem: RewardItem) {
 //                        var rewardAmount = rewardItem.amount
@@ -368,15 +420,61 @@ class TaskFormActivity : AppCompatActivity(),
                 })
                 mAdMobPreferences.putInt(CountAdMob.TYPE.INSERTED, 1)
             } else {
-                Log.d("TAG", "The rewarded ad wasn't ready yet.")
+                val toast: Toast
+
+                if (taskSaved.id != null) {
+                    toast = Toast.makeText(
+                        baseContext,
+                        R.string.task_updated_successfully,
+                        Toast.LENGTH_SHORT
+                    )
+                } else {
+                    toast = Toast.makeText(
+                        baseContext,
+                        R.string.task_successfully_created,
+                        Toast.LENGTH_SHORT
+                    )
+                }
+
+                toast.setGravity(Gravity.BOTTOM, 0, 40)
+                toast.view = layoutInflater.inflate(R.layout.toast_layout, null)
+
+                finish()
+                progressButton.buttonFinish()
+
+                toast.show()
             }
         } else {
-            mAdMobPreferences.putInt(CountAdMob.TYPE.INSERTED, countAdMob+1)
+            mAdMobPreferences.putInt(CountAdMob.TYPE.INSERTED, countAdMob + 1)
+
+            val toast: Toast
+
+            if (taskSaved.id != null) {
+                toast = Toast.makeText(
+                    baseContext,
+                    R.string.task_updated_successfully,
+                    Toast.LENGTH_SHORT
+                )
+            } else {
+                toast = Toast.makeText(
+                    baseContext,
+                    R.string.task_successfully_created,
+                    Toast.LENGTH_SHORT
+                )
+            }
+
+            toast.setGravity(Gravity.BOTTOM, 0, 40)
+            toast.view = layoutInflater.inflate(R.layout.toast_layout, null)
+
+            finish()
+            progressButton.buttonFinish()
+
+            toast.show()
         }
         return
     }
 
-    private fun saveTask() {
+    private fun saveImage() {
 
         if (imageBitmap == null || imageBitmap!!.isRecycled) {
             if (taskSaved.id != null) {
@@ -448,7 +546,8 @@ class TaskFormActivity : AppCompatActivity(),
             timestamp,
             txtDescription.text.toString(),
             uriImage,
-            namePhoto
+            namePhoto,
+            notificationId
         )
 
         db.collection("tasks")
@@ -460,15 +559,10 @@ class TaskFormActivity : AppCompatActivity(),
                     "DocumentSnapshot added with ID: ${documentReference}"
                 )
 
-                val toast =
-                    Toast.makeText(this, R.string.task_successfully_created, Toast.LENGTH_SHORT)
-                toast.setGravity(Gravity.BOTTOM, 0, 40)
-                toast.view = layoutInflater.inflate(R.layout.toast_layout, null)
+                createNotification(task)
 
-                finish()
-                progressButton.buttonFinish()
+                showVideoAdMob()
 
-                toast.show()
             }
             .addOnFailureListener { e ->
                 Log.w("addOnFailureListener", "Error adding document", e)
@@ -522,7 +616,8 @@ class TaskFormActivity : AppCompatActivity(),
             timestamp,
             txtDescription.text.toString(),
             uriImage,
-            namePhoto
+            namePhoto,
+            Random().nextInt(Int.MAX_VALUE)
         )
 
         db.collection("tasks")
@@ -533,15 +628,9 @@ class TaskFormActivity : AppCompatActivity(),
                     "DocumentSnapshot added with ID: ${documentReference.id}"
                 )
 
-                val toast =
-                    Toast.makeText(this, R.string.task_successfully_created, Toast.LENGTH_SHORT)
-                toast.setGravity(Gravity.BOTTOM, 0, 40)
-                toast.view = layoutInflater.inflate(R.layout.toast_layout, null)
+                createNotification(task)
 
-                finish()
-                progressButton.buttonFinish()
-
-                toast.show()
+                showVideoAdMob()
             }
             .addOnFailureListener { e ->
                 Log.w("addOnFailureListener", "Error adding document", e)

@@ -10,7 +10,8 @@ data class TaskModel (
     var date: Long? = null,
     var description: String? = null,
     var image: String? = null,
-    var namePhoto: String? = null
+    var namePhoto: String? = null,
+    var notificationId: Int? = null
 ) : CommonModel(), Serializable
 
 

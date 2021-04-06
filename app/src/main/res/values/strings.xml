@@ -65,6 +65,8 @@
     <string name="task_updated_successfully">Task successfully updated</string>
     <string name="next_week">Next Week</string>
     <string name="not_completed">Not Completed</string>
+    <string name="message_notification">Your task starts in an hour</string>
+    <string name="default_notification_channel_id" translatable="false">default_notification_channel_id</string>
 
 
     <!--  ITEMS PRIORITY  -->

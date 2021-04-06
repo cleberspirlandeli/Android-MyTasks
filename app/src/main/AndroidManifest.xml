@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.mytasks">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -43,6 +44,30 @@
         <activity
             android:name=".MainActivity"
             android:theme="@style/Theme.MyTasks.NoActionBar" />
+
+
+        <!-- FIREBASE CLOUD MESSAGE -->
+        <service
+            android:name=".service.firebase.CloudMessaging"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_baseline_check_circle_outline_24" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/purple_700" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+
+        <receiver android:name=".common.Receiver" />
+
     </application>
 
 </manifest>
