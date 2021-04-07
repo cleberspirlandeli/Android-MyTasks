@@ -39,7 +39,9 @@ class SplashScreen : AppCompatActivity(), Runnable {
             for(signature in info.signatures) {
                 val md = MessageDigest.getInstance("SHA")
                 md.update(signature.toByteArray())
-                Log.e("KEYHASH", Base64.encodeToString(md.digest(), Base64.DEFAULT))
+                //Log.e("KEYHASH", Base64.encodeToString(md.digest(), Base64.DEFAULT))
+                // xF6CTSiI42aqhJ/kp9ujCcDAEeM=
+//                mytasksapp
             }
         }
         catch (e: PackageManager.NameNotFoundException) {
