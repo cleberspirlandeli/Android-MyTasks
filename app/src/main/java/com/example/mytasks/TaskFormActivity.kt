@@ -120,8 +120,6 @@ class TaskFormActivity : AppCompatActivity(),
         storageRef = storage.getReferenceFromUrl("gs://mytasks-d9a0d.appspot.com/mytasks/task")
         user = auth.currentUser
 
-
-
         mAdMobPreferences = AdMobPreferences(baseContext)
 
         taskSaved = TaskModel()

@@ -62,14 +62,14 @@ class NotCompletedFragment : Fragment() {
             }
 
             override fun onDeleteTaskClick(task: TaskModel) {
-                mTodayViewModel.delete(task, ScreenFilterConstants.SCREEN.TODAY)
+                mTodayViewModel.delete(task, ScreenFilterConstants.SCREEN.ALL_UNDO)
             }
 
             override fun onChangeCompleteTaskClick(id: String, statusTask: Boolean) {
                 mTodayViewModel.onChangeCompleteTaskClick(
                     id,
                     statusTask,
-                    ScreenFilterConstants.SCREEN.TODAY
+                    ScreenFilterConstants.SCREEN.ALL_UNDO
                 )
             }
         }

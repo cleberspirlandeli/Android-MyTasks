@@ -1,13 +1,20 @@
 package com.example.mytasks.ui.today
 
+import android.app.AlarmManager
 import android.app.Application
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.util.Log
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.getSystemService
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.mytasks.R
 import com.example.mytasks.TaskFormActivity
+import com.example.mytasks.common.Receiver
 import com.example.mytasks.common.constants.ScreenFilterConstants
 import com.example.mytasks.listener.ApiCallbackListener
 import com.example.mytasks.listener.ValidationListener
@@ -42,7 +49,7 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
     // REPOSITORY
     private val mTaskRepository: TaskRepository = TaskRepository(application)
 
-    // LISTENERS
+//    private lateinit var alarmManager: AlarmManager
 
     private val mApiCallbackListener = object : ApiCallbackListener<List<TaskModel>> {
 
@@ -66,6 +73,16 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         task.id?.let { deleteTask(it, screen) }
+
+        task.notificationId?.let { it -> deleteNotification(it) }
+    }
+
+    private fun deleteNotification(notificationId: Int) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, Receiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context, notificationId, intent, PendingIntent.FLAG_ONE_SHOT)
+
+        alarmManager.cancel(pendingIntent)
     }
 
     private fun deleteTask(id: String, screen: Int) {
@@ -87,7 +104,10 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
     private fun getListByTypeScreen(screen: Int) {
         when (screen) {
             ScreenFilterConstants.SCREEN.TODAY -> getListAllTasks()
+            ScreenFilterConstants.SCREEN.THIS_WEEK -> getListThisWeekTasks()
+            ScreenFilterConstants.SCREEN.NEXT_WEEK -> getListNextWeekTasks()
             ScreenFilterConstants.SCREEN.DONE -> getListDoneTasks()
+            ScreenFilterConstants.SCREEN.ALL_UNDO -> getListNotCompletedTasks()
         }
     }
 

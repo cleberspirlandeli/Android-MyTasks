@@ -27,5 +27,10 @@
             android:id="@+id/nav_not_completed"
             android:icon="@drawable/ic_baseline_radio_button_checked_24"
             android:title="@string/not_completed" />
+
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_baseline_logout_24"
+            android:title="@string/logout" />
     </group>
 </menu>

@@ -5,11 +5,10 @@
     <string name="fb_login_protocol_scheme">fb481217056244918</string>
 
     <!--  ADMOB  -->
-    <string name="admob_id_app">ca-app-pub-2435307357987224~3218466148</string>
-    <string name="admob_banner_geral">ca-app-pub-2435307357987224/7605423393</string>
-    <string name="admob_intersticial_geral">ca-app-pub-2435307357987224/7343545427</string>
-    <string name="admob_test">ca-app-pub-3940256099942544/6300978111</string>
-
+    <string name="admob_id_app" translatable="false">ca-app-pub-2435307357987224~3218466148</string>
+    <string name="admob_banner_geral" translatable="false">ca-app-pub-2435307357987224/7605423393</string>
+    <string name="admob_intersticial_geral" translatable="false">ca-app-pub-2435307357987224/7343545427</string>
+    <string name="admob_test" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
 
 
     <string name="app_name">MY TASKS</string>
@@ -67,6 +66,10 @@
     <string name="not_completed">Not Completed</string>
     <string name="message_notification">Your task starts in an hour</string>
     <string name="default_notification_channel_id" translatable="false">default_notification_channel_id</string>
+    <string name="logout">Logout</string>
+    <string name="title_logout">Exite</string>
+    <string name="message_logout">Do you want to exit the app?</string>
+    <string name="loading">Loading...</string>
 
 
     <!--  ITEMS PRIORITY  -->

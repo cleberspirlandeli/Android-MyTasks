@@ -65,7 +65,10 @@
     <string name="task_removed_successfully">Tarefa removida com sucesso</string>
     <string name="task_updated_successfully">Tarefa atualizada com sucesso</string>
     <string name="message_notification">Sua tarefa começa em uma hora</string>
-
+    <string name="logout">Sair</string>
+    <string name="title_logout">Sair</string>
+    <string name="message_logout">Deseja sair do app?</string>
+    <string name="loading">Carregando...</string>
 
     <!--  ITEMS PRIORITY  -->
     <string-array name="priorities_array">

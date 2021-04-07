@@ -174,9 +174,9 @@ class TaskViewHolder(itemView: View, val listener: TaskListener) :
         }
 
         // Events
-        mCardViewTask.setOnClickListener {
-            task.let { listener.onViewTaskClick(it) }
-        }
+//        mCardViewTask.setOnClickListener {
+//            task.let { listener.onViewTaskClick(it) }
+//        }
 
         mBtnDelete.setOnClickListener { view ->
             AlertDialog.Builder(itemView.context)

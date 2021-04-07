@@ -64,14 +64,14 @@ class NextWeekFragment : Fragment() {
             }
 
             override fun onDeleteTaskClick(task: TaskModel) {
-                mTodayViewModel.delete(task, ScreenFilterConstants.SCREEN.TODAY)
+                mTodayViewModel.delete(task, ScreenFilterConstants.SCREEN.NEXT_WEEK)
             }
 
             override fun onChangeCompleteTaskClick(id: String, statusTask: Boolean) {
                 mTodayViewModel.onChangeCompleteTaskClick(
                     id,
                     statusTask,
-                    ScreenFilterConstants.SCREEN.TODAY
+                    ScreenFilterConstants.SCREEN.NEXT_WEEK
                 )
             }
 
